@@ -1,0 +1,85 @@
+// Stop the ClientLayout body from scrolling on this page —
+// scroll is handled internally by .client-home__salons only
+:host {
+  display: contents; // let the child fill the parent body naturally
+}
+
+// The outer content wrapper fills the full available height
+.client-home__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+// ── Fixed Top Zone (Greeting + Search) ───────────────────
+.client-home__top {
+  flex-shrink: 0; // never shrinks — always visible
+  padding: 16px 20px 0;
+
+  @media (min-width: 640px) {
+    padding: 24px 32px 0;
+  }
+}
+
+.client-home__greeting {
+  margin: 8px 0 20px;
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #111827;
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+}
+
+.client-home__user-name {
+  color: #111827;
+}
+
+.client-home__search {
+  margin-bottom: 20px;
+}
+
+// ── Scrollable Salon List ─────────────────────────────────
+.client-home__salons {
+  display: flex;
+  flex-direction: column;
+  flex: 1;           // takes all remaining vertical space
+  overflow-y: auto;  // only THIS section scrolls
+  padding: 0 20px 90px;
+
+  @media (min-width: 640px) {
+    padding: 0 32px 100px;
+  }
+
+  // Smooth momentum scrolling on iOS
+  -webkit-overflow-scrolling: touch;
+
+  // Subtle separator from the top zone
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
+}
+
+.client-home__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 12px;
+
+  @media (min-width: 640px) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+}
+
+.client-home__empty {
+  padding: 32px 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-align: center;
+}

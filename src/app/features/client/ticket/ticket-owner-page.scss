@@ -1,0 +1,134 @@
+.ticket-owner-page__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 8px 16px;
+  background: #ffffff;
+
+  h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+}
+
+.ticket-owner-page__back-btn {
+  position: absolute;
+  left: 12px;
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  color: #1e293b;
+  text-decoration: none;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.ticket-owner-page__content {
+  padding: 24px 20px 24px;
+}
+
+.ticket-owner-page__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 6px;
+    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0;
+    max-width: 260px;
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+}
+
+.ticket-owner-page__hero-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  margin-bottom: 16px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: #2563eb;
+
+  svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.ticket-owner-page__options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ticket-owner-page__section-label {
+  margin-top: 8px;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ticket-owner-page__fixed-footer {
+  padding: 16px 20px 20px;
+  background: #ffffff;
+}
+
+.ticket-owner-page__submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 54px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 24px;
+  background: #ffc107;
+  color: #111827;
+  font-size: 1.02rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.35);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    background: #ffb300;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}

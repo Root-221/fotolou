@@ -1,0 +1,322 @@
+.coiffeur-tickets {
+  position: relative;
+  padding: 16px 20px 90px;
+  min-height: calc(100vh - 120px);
+}
+
+.coiffeur-tickets__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  padding: 4px;
+  background: #eef2f6;
+}
+
+.coiffeur-tickets__tab {
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &--active {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  }
+}
+
+.coiffeur-tickets__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.coiffeur-tickets__title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.coiffeur-tickets__filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.coiffeur-tickets__list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.queue-card {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 18px;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.queue-card__top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.queue-card__pos-box {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #2563eb;
+  font-size: 1.15rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.queue-card__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.queue-card__name {
+  color: #0f172a;
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.queue-card__phone {
+  color: #64748b;
+  font-size: 0.80rem;
+}
+
+.queue-card__status-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+
+  &--current {
+    background: #059669;
+    color: #ffffff;
+  }
+
+  &--waiting {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+
+  &--served {
+    background: #dcfce7;
+    color: #16a34a;
+    font-weight: 800;
+  }
+
+  &--cancelled {
+    background: #fee2e2;
+    color: #ef4444;
+    font-weight: 800;
+  }
+}
+
+.queue-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.queue-card__btn {
+  border-radius: 10px;
+  height: 42px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &--skip {
+    flex: 1;
+    border: none;
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+
+    &:hover {
+      background: #1d4ed8;
+    }
+  }
+
+  &--served {
+    flex: 1;
+    border: 1.5px solid #059669;
+    background: transparent;
+    color: #059669;
+
+    &:hover {
+      background: #ecfdf5;
+    }
+  }
+
+  &--more {
+    width: 42px;
+    border: 1.5px solid #e2e8f0;
+    background: transparent;
+    color: #64748b;
+    font-size: 1.2rem;
+    line-height: 1;
+
+    &:hover {
+      background: #f8fafc;
+    }
+  }
+}
+
+.coiffeur-tickets__empty {
+  padding: 48px 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.coiffeur-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 10;
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    background: #1d4ed8;
+    transform: scale(1.05);
+  }
+
+  svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* Modal styles for walk-in client */
+.walkin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.walkin-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.walkin-modal__title {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.walkin-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    color: #475569;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  input {
+    min-height: 44px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0 14px;
+    font-size: 0.90rem;
+    outline: none;
+
+    &:focus {
+      border-color: #2563eb;
+    }
+  }
+}
+
+.walkin-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.walkin-modal__cancel-btn {
+  flex: 1;
+  min-height: 44px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.walkin-modal__submit-btn {
+  flex: 1;
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}

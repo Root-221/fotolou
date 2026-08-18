@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.salon-list-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 14px;
+  border-bottom: 1px solid #f0f2f5;
+  padding: 16px 0;
+  text-decoration: none;
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.salon-list-card__image {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f3f4f6;
+}
+
+.salon-list-card__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.salon-list-card__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.salon-list-card__title-row > strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #111827;
+  font-size: 0.98rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salon-list-card__location {
+  color: #6b7280;
+  font-size: 0.84rem;
+  font-weight: 400;
+}
+
+.salon-list-card__queue {
+  margin-top: 6px;
+  color: #4b5563;
+  font-size: 0.88rem;
+
+  strong {
+    color: #111827;
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-right: 4px;
+  }
+}

@@ -1,0 +1,277 @@
+.ticket-detail-page__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 8px 16px;
+  background: #ffffff;
+
+  h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+}
+
+.ticket-detail-page__back-btn {
+  position: absolute;
+  left: 12px;
+  display: inline-grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  color: #1e293b;
+  text-decoration: none;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.ticket-detail-page__content {
+  padding: 24px 20px 32px;
+}
+
+.ticket-detail-page__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 4px;
+    color: #0f172a;
+    font-size: 1.4rem;
+    font-weight: 800;
+  }
+
+  p {
+    margin: 0 0 24px;
+    color: #64748b;
+    font-size: 0.88rem;
+    font-weight: 400;
+  }
+}
+
+.ticket-detail-page__status-tag {
+  margin-bottom: 8px;
+  color: #2563eb;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  &--completed {
+    color: #16a34a;
+  }
+
+  &--cancelled {
+    color: #ef4444;
+  }
+}
+
+.ticket-detail-page__ring-container {
+  position: relative;
+  display: grid;
+  width: 200px;
+  height: 200px;
+  place-items: center;
+}
+
+.ticket-detail-page__ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  circle {
+    transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;
+  }
+}
+
+.ticket-detail-page__number-display {
+  position: relative;
+  z-index: 2;
+  color: #0f172a;
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ticket-detail-page__stats {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.ticket-detail-page__sms-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #edf4ff;
+  color: #3b82f6;
+
+  p {
+    margin: 0;
+    color: inherit;
+    font-size: 0.88rem;
+    line-height: 1.45;
+
+    strong {
+      color: inherit;
+      font-weight: 800;
+    }
+  }
+
+  &--completed {
+    background: #dcfce7;
+    color: #15803d;
+
+    .ticket-detail-page__sms-icon {
+      color: #16a34a;
+    }
+  }
+
+  &--cancelled {
+    background: #fee2e2;
+    color: #b91c1c;
+
+    .ticket-detail-page__sms-icon {
+      color: #ef4444;
+    }
+  }
+}
+
+.ticket-detail-page__sms-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #2563eb;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.ticket-detail-page__sms-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+
+    strong {
+      font-weight: 800;
+    }
+  }
+}
+
+.ticket-detail-page__served-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: inherit;
+  font-size: 0.80rem;
+  font-weight: 700;
+  opacity: 0.9;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+
+.ticket-detail-page__fixed-footer {
+  padding: 16px 20px 20px;
+  background: #ffffff;
+}
+
+.ticket-detail-page__cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 24px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    background: #fecaca;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.ticket-detail-page__cancel-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.ticket-detail-page__new-ticket-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 54px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 24px;
+  background: #ffc107;
+  color: #111827;
+  font-size: 1.02rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.35);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    background: #ffb300;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}

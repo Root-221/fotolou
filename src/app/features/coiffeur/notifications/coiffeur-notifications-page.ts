@@ -1,0 +1,147 @@
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
+import { PageHeader } from '../../../shared/components/page-header/page-header';
+import { NotificationService } from '../../../shared/services/notification.service';
+import { AppNotification } from '../../../shared/models/notification';
+
+@Component({
+  selector: 'app-coiffeur-notifications-page',
+  imports: [
+    ClientLayout,
+    PageHeader
+  ],
+  template: `
+    <app-client-layout [showBottomNav]="false" [hasCustomFooter]="false" role="coiffeur">
+      <!-- Fixed Header Slot with centered title -->
+      <div slot="header" class="notifications-header">
+        <app-page-header title="Notifications Pro" backRoute="/coiffeur/home" />
+
+        @if (notificationService.coiffeurUnreadCount() > 0) {
+          <button
+            type="button"
+            class="notifications-header__read-all-btn"
+            (click)="notificationService.markAllAsReadByRole('coiffeur')"
+          >
+            Tout lire
+          </button>
+        }
+      </div>
+
+      <!-- Scrollable Main Content -->
+      <div class="notifications-page__content">
+        @if (notificationService.coiffeurNotifications().length > 0) {
+          <div class="notifications-page__list">
+            @for (notification of notificationService.coiffeurNotifications(); track notification.id) {
+              <div
+                class="notification-card"
+                [class.notification-card--unread]="!notification.isRead"
+                (click)="onNotificationClick(notification)"
+              >
+                <!-- Icon by Type -->
+                <div
+                  class="notification-card__icon-wrap"
+                  [class]="'notification-card__icon-wrap--' + notification.type"
+                  aria-hidden="true"
+                >
+                  @switch (notification.type) {
+                    @case ('ticket') {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 7h12l1 13H5L6 7Z"/>
+                        <path d="M9 7a3 3 0 0 1 6 0"/>
+                      </svg>
+                    }
+                    @case ('order') {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                      </svg>
+                    }
+                    @default {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                      </svg>
+                    }
+                  }
+                </div>
+
+                <!-- Text Content -->
+                <div class="notification-card__body">
+                  <div class="notification-card__header-row">
+                    <strong class="notification-card__title">{{ notification.title }}</strong>
+                    <span class="notification-card__time">{{ formatTime(notification.createdAt) }}</span>
+                  </div>
+
+                  <p class="notification-card__message">{{ notification.message }}</p>
+                </div>
+
+                <!-- Unread Dot Indicator -->
+                @if (!notification.isRead) {
+                  <span class="notification-card__unread-dot" aria-label="Non lu"></span>
+                }
+
+                <!-- Delete Action -->
+                <button
+                  type="button"
+                  class="notification-card__delete-btn"
+                  (click)="onDelete($event, notification.id)"
+                  aria-label="Supprimer"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="notifications-page__empty">
+            <div class="notifications-page__empty-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </div>
+            <h3>Aucune notification pro</h3>
+            <p>Toutes vos alertes salon et file d'attente apparaîtront ici.</p>
+          </div>
+        }
+      </div>
+    </app-client-layout>
+  `,
+  styleUrl: '../../client/notifications/notifications-page.scss'
+})
+export class CoiffeurNotificationsPage {
+  private readonly router = inject(Router);
+  protected readonly notificationService = inject(NotificationService);
+
+  protected onNotificationClick(notification: AppNotification): void {
+    this.notificationService.markAsRead(notification.id);
+    if (notification.targetRoute) {
+      this.router.navigate([notification.targetRoute]);
+    }
+  }
+
+  protected onDelete(event: Event, id: string): void {
+    event.stopPropagation();
+    this.notificationService.deleteNotification(id);
+  }
+
+  protected formatTime(isoStr: string): string {
+    const diffMs = Date.now() - new Date(isoStr).getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMins < 60) {
+      return `Il y a ${Math.max(1, diffMins)} min`;
+    }
+    if (diffHours < 24) {
+      return `Il y a ${diffHours}h`;
+    }
+    return `Il y a ${diffDays}j`;
+  }
+}

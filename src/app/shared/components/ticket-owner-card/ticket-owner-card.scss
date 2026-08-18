@@ -1,0 +1,93 @@
+:host {
+  display: block;
+}
+
+.ticket-owner-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1.5px solid #eef1f6;
+  border-radius: 14px;
+  padding: 16px 20px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    border-color: #cbd5e1;
+  }
+}
+
+.ticket-owner-card--selected {
+  border-color: #3b82f6;
+  background: #f4f8ff;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.08);
+}
+
+.ticket-owner-card__content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ticket-owner-card__avatar {
+  display: inline-grid;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.ticket-owner-card__avatar--blue {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.ticket-owner-card__avatar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.ticket-owner-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ticket-owner-card__name {
+  color: #0f172a;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.ticket-owner-card__subtitle {
+  color: #64748b;
+  font-size: 0.84rem;
+  font-weight: 400;
+}
+
+.ticket-owner-card__input-wrapper {
+  margin-top: 4px;
+}
+
+.ticket-owner-card__input {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 14px;
+  outline: none;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.88rem;
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+}

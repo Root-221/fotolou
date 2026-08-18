@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.bottom-navigation {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: 20;
+  display: grid;
+  width: min(100%, 390px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid #eef1f6;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 -8px 22px rgba(17, 24, 39, 0.04);
+  transform: translateX(-50%);
+}
+
+.bottom-navigation__item {
+  display: grid;
+  min-height: 68px;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  color: #647084;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.bottom-navigation__item--active {
+  color: var(--primary);
+}
+
+.bottom-navigation__icon {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+}
+
+.bottom-navigation__icon svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.bottom-navigation__item--active .bottom-navigation__icon svg {
+  fill: currentColor;
+}
+
+.bottom-navigation__item--active .bottom-navigation__icon[data-icon='profile'] svg,
+.bottom-navigation__item--active .bottom-navigation__icon[data-icon='tickets'] svg,
+.bottom-navigation__item--active .bottom-navigation__icon[data-icon='shop'] svg {
+  fill: none;
+}
