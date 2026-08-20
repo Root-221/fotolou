@@ -1,85 +1,76 @@
-// Stop the ClientLayout body from scrolling on this page —
-// scroll is handled internally by .client-home__salons only
 :host {
-  display: contents; // let the child fill the parent body naturally
+  display: block;
+  width: 100%;
 }
 
-// The outer content wrapper fills the full available height
 .client-home__content {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+  width: 100%;
+  padding-bottom: 30px;
 }
 
-// ── Fixed Top Zone (Greeting + Search) ───────────────────
+// ── Top Zone ──────────────────────────────────────────────────
 .client-home__top {
-  flex-shrink: 0; // never shrinks — always visible
-  padding: 16px 20px 0;
+  padding: 20px 16px 0;
 
   @media (min-width: 640px) {
-    padding: 24px 32px 0;
+    padding: 28px 24px 0;
   }
 }
 
 .client-home__greeting {
-  margin: 8px 0 20px;
+  margin-bottom: 16px;
 
   h1 {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: #111827;
-    font-size: 1.6rem;
+    color: var(--text-primary, #0f172a);
+    font-size: 1.5rem;
     font-weight: 800;
     line-height: 1.2;
+
+    @media (min-width: 640px) {
+      font-size: 1.85rem;
+    }
   }
 }
 
 .client-home__user-name {
-  color: #111827;
+  color: var(--primary, #1E5AF0);
+}
+
+.client-home__subtitle {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #64748b);
+  margin-top: 4px;
 }
 
 .client-home__search {
   margin-bottom: 20px;
 }
 
-// ── Scrollable Salon List ─────────────────────────────────
+// ── Salon List ────────────────────────────────────────────────
 .client-home__salons {
   display: flex;
   flex-direction: column;
-  flex: 1;           // takes all remaining vertical space
-  overflow-y: auto;  // only THIS section scrolls
-  padding: 0 20px 90px;
+  padding: 10px 16px;
 
   @media (min-width: 640px) {
-    padding: 0 32px 100px;
+    padding: 12px 24px;
   }
-
-  // Smooth momentum scrolling on iOS
-  -webkit-overflow-scrolling: touch;
-
-  // Subtle separator from the top zone
-  border-top: 1px solid #f1f5f9;
-  padding-top: 16px;
 }
 
 .client-home__list {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 12px;
+  margin-top: 14px;
 
   @media (min-width: 640px) {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
   }
-}
-
-.client-home__empty {
-  padding: 32px 0;
-  color: #6b7280;
-  font-size: 0.9rem;
-  text-align: center;
 }

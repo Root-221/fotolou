@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
@@ -151,8 +151,9 @@ export class AddRelativePage {
       this.name,
       this.relation as RelativeRelation,
       this.phone || undefined
-    );
-    this.router.navigate(['/client/proches']);
+    ).subscribe(() => {
+      this.router.navigate(['/client/proches']);
+    });
   }
 
   protected cancel(): void {

@@ -5,6 +5,7 @@ import { LocationHeader } from '../../../shared/components/location-header/locat
 import { StatCard } from '../../../shared/components/stat-card/stat-card';
 import { ConfirmModal } from '../../../shared/components/confirm-modal/confirm-modal';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { AuthSessionService } from '../../auth/auth-session.service';
 
 @Component({
   selector: 'app-coiffeur-profile-page',
@@ -25,7 +26,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
         (notificationClick)="goToNotifications()"
       />
 
-      <!-- Scrollable Body -->
+      <!-- Content -->
       <div class="profile-page">
 
         <!-- Avatar & Identity -->
@@ -58,7 +59,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
                 <circle cx="12" cy="13" r="4"/>
               </svg>
             </span>
-            <span class="profile-page__menu-label">Photos Profil & Salon</span>
+            <span class="profile-page__menu-label">Photos Profil &amp; Salon</span>
             <span class="profile-page__menu-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
@@ -193,11 +194,12 @@ import { NotificationService } from '../../../shared/services/notification.servi
 export class CoiffeurProfilePage {
   private readonly router = inject(Router);
   protected readonly notificationService = inject(NotificationService);
+  private readonly auth = inject(AuthSessionService);
 
   protected readonly showLogoutModal = signal(false);
   protected readonly salonName = 'King Barber';
-  protected readonly barberName = 'Moussa Kane';
-  protected readonly phone = '+221 77 862 70 52';
+  protected readonly barberName = 'Mamadou Fall';
+  protected readonly phone = '+221 77 456 78 90';
 
   protected goToPhotos(): void {
     this.router.navigate(['/coiffeur/settings/photos']);

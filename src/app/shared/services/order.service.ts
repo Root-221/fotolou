@@ -1,55 +1,26 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, catchError, of } from 'rxjs';
 import { Order, OrderStatus, OrderType } from '../models/order';
 import { CartItem } from '../models/product';
-import { PRODUCTS_MOCK } from '../data/products.mock';
-
-const INITIAL_ORDERS_MOCK: readonly Order[] = [
-  {
-    id: 'ord-101',
-    orderNumber: 'CMD-2026-012',
-    items: [
-      {
-        product: PRODUCTS_MOCK[0], // Elixir Ultime
-        quantity: 1
-      }
-    ],
-    subtotal: 32000,
-    deliveryFee: 2000,
-    totalPrice: 34000,
-    status: 'en_cours',
-    orderType: 'whatsapp',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'ord-100',
-    orderNumber: 'CMD-2026-008',
-    items: [
-      {
-        product: PRODUCTS_MOCK[3], // Wahl Magic Clip
-        quantity: 1
-      },
-      {
-        product: PRODUCTS_MOCK[4], // Huile
-        quantity: 1
-      }
-    ],
-    subtotal: 84000,
-    deliveryFee: 2000,
-    totalPrice: 86000,
-    status: 'livre',
-    orderType: 'whatsapp',
-    createdAt: new Date(Date.now() - 86400000 * 3).toISOString()
-  }
-];
+import { API_CONFIG } from '../../core/config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  readonly orders = signal<readonly Order[]>(INITIAL_ORDERS_MOCK);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = API_CONFIG.baseUrl;
+
+  // ── State Signals ───────────────────────────────────────────
+  readonly orders = signal<readonly Order[]>([]);
+  readonly loading = signal<boolean>(false);
+  readonly error = signal<string | null>(null);
+
   readonly phoneNumber = '+221 77 862 70 52';
   readonly whatsappPhone = '221778627052';
 
+  // ── Computed Lists ──────────────────────────────────────────
   readonly activeOrders = computed(() =>
     this.orders().filter((o) => o.status === 'en_cours')
   );
@@ -58,20 +29,55 @@ export class OrderService {
     this.orders().filter((o) => o.status === 'livre' || o.status === 'annule')
   );
 
+  constructor() {
+    this.loadOrders();
+  }
+
+  loadOrders(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http.get<Order[]>(`${this.baseUrl}${API_CONFIG.endpoints.orders}`).pipe(
+      tap((data) => {
+        this.orders.set(data);
+        this.loading.set(false);
+      }),
+      catchError((err) => {
+        console.error('[OrderService] Error fetching orders:', err);
+        this.error.set('Impossible de charger vos commandes.');
+        this.loading.set(false);
+        return of([]);
+      })
+    ).subscribe();
+  }
+
+  getOrderById(id: string | null): Observable<Order | null> {
+    if (!id) return of(null);
+    return this.http.get<Order>(`${this.baseUrl}${API_CONFIG.endpoints.orders}/${id}`).pipe(
+      catchError((err) => {
+        console.error(`[OrderService] Error fetching order ${id}:`, err);
+        return of(this.orders().find((o) => o.id === id) || null);
+      })
+    );
+  }
+
   createOrder(
     items: readonly CartItem[],
     subtotal: number,
     deliveryFee: number,
     totalPrice: number,
     orderType: OrderType
-  ): Order {
+  ): Observable<Order> {
     const nextSeq = this.orders().length + 13;
     const orderNum = `CMD-2026-${nextSeq.toString().padStart(3, '0')}`;
 
     const newOrder: Order = {
       id: `ord-${Date.now()}`,
       orderNumber: orderNum,
-      items: [...items],
+      items: items.map((i) => ({
+        product: { ...i.product },
+        quantity: i.quantity
+      })),
       subtotal,
       deliveryFee,
       totalPrice,
@@ -80,13 +86,22 @@ export class OrderService {
       createdAt: new Date().toISOString()
     };
 
+    // Optimistic update
     this.orders.update((prev) => [newOrder, ...prev]);
-    return newOrder;
+
+    return this.http.post<Order>(`${this.baseUrl}${API_CONFIG.endpoints.orders}`, newOrder).pipe(
+      tap((savedOrder) => {
+        this.orders.update((prev) =>
+          prev.map((o) => (o.id === newOrder.id ? savedOrder : o))
+        );
+      }),
+      catchError((err) => {
+        console.warn('[OrderService] API post failed, keeping local order:', err);
+        return of(newOrder);
+      })
+    );
   }
 
-  /**
-   * Message WhatsApp pour PASSER une nouvelle commande
-   */
   getNewOrderWhatsAppUrl(order: Order): string {
     const itemListText = order.items
       .map((item) => `• ${item.product.title} (x${item.quantity}) - ${(item.product.price * item.quantity).toLocaleString('fr-FR')} FCFA`)
@@ -97,9 +112,6 @@ export class OrderService {
     return `https://wa.me/${this.whatsappPhone}?text=${encodeURIComponent(message)}`;
   }
 
-  /**
-   * Message WhatsApp pour FAIRE LE SUIVI d'une commande existante
-   */
   getOrderTrackingWhatsAppUrl(order: Order): string {
     const statusText = order.status === 'en_cours' ? 'En cours de livraison' : order.status === 'livre' ? 'Livré' : 'Annulé';
 

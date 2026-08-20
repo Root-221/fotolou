@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { NotificationService } from '../../../shared/services/notification.service';
 
 export interface QueueItem {
@@ -51,7 +52,7 @@ const INITIAL_QUEUE: QueueItem[] = [
   {
     id: 'q-5',
     position: '00',
-    clientName: 'Saliou',
+    clientName: 'Saliou Ndiaye',
     phone: '+221 77 444 33 22',
     status: 'annule',
     category: 'history',
@@ -63,7 +64,8 @@ const INITIAL_QUEUE: QueueItem[] = [
   selector: 'app-coiffeur-tickets-page',
   imports: [
     ClientLayout,
-    LocationHeader
+    LocationHeader,
+    EmptyStateComponent
   ],
   template: `
     <app-client-layout activeNav="tickets" role="coiffeur" [hasHeaderSlot]="true">
@@ -75,9 +77,9 @@ const INITIAL_QUEUE: QueueItem[] = [
         (notificationClick)="goToNotifications()"
       />
 
-      <!-- Scrollable Main Content -->
+      <!-- Content -->
       <div class="coiffeur-tickets">
-        <!-- Tab Selector (Screenshot 2) -->
+        <!-- Tab Selector -->
         <div class="coiffeur-tickets__tabs" role="tablist">
           <button
             type="button"
@@ -86,7 +88,7 @@ const INITIAL_QUEUE: QueueItem[] = [
             (click)="activeTab.set('active')"
             role="tab"
           >
-            Actuel
+            File en direct ({{ activeCount() }})
           </button>
           <button
             type="button"
@@ -95,22 +97,21 @@ const INITIAL_QUEUE: QueueItem[] = [
             (click)="activeTab.set('history')"
             role="tab"
           >
-            Historiques
+            Historique ({{ historyCount() }})
           </button>
         </div>
 
         <!-- Section Title & Filter -->
         <div class="coiffeur-tickets__section-header">
           <h1 class="coiffeur-tickets__title">
-            {{ activeTab() === 'active' ? 'File en direct' : 'Historique des passages' }}
+            {{ activeTab() === 'active' ? 'Clients dans la file' : 'Historique des passages' }}
           </h1>
 
-          <button type="button" class="coiffeur-tickets__filter-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-            </svg>
-            <span>Filtrer</span>
-          </button>
+          @if (activeTab() === 'active') {
+            <button type="button" class="coiffeur-tickets__add-btn" (click)="showAddModal.set(true)">
+              + Ajouter un client
+            </button>
+          }
         </div>
 
         <!-- Live Queue List -->
@@ -157,41 +158,29 @@ const INITIAL_QUEUE: QueueItem[] = [
                     class="queue-card__btn queue-card__btn--served"
                     (click)="markServed(item.id)"
                   >
-                    Servi
+                    Marquer Servi
                   </button>
 
                   <button
                     type="button"
                     class="queue-card__btn queue-card__btn--more"
                     (click)="openOptions(item.id)"
-                    aria-label="Options"
+                    aria-label="Annuler"
+                    title="Annuler le ticket"
                   >
-                    &#8942;
+                    ✕
                   </button>
                 </div>
               }
             </div>
           } @empty {
-            <div class="coiffeur-tickets__empty">
-              <p>Aucun ticket dans cette liste.</p>
-            </div>
+            <app-empty-state
+              icon="ticket"
+              [title]="activeTab() === 'active' ? 'File d\\'attente vide' : 'Aucun historique'"
+              [description]="activeTab() === 'active' ? 'Aucun client n\\'est en attente pour le moment.' : 'L\\'historique des tickets servis apparaîtra ici.'"
+            />
           }
         </div>
-
-        <!-- Floating Action Button (FAB) -->
-        <button
-          type="button"
-          class="coiffeur-fab"
-          (click)="showAddModal.set(true)"
-          aria-label="Ajouter un client"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="8.5" cy="7" r="4"/>
-            <line x1="20" y1="8" x2="20" y2="14"/>
-            <line x1="17" y1="11" x2="23" y2="11"/>
-          </svg>
-        </button>
       </div>
     </app-client-layout>
 
@@ -199,15 +188,15 @@ const INITIAL_QUEUE: QueueItem[] = [
     @if (showAddModal()) {
       <div class="walkin-modal-backdrop" (click)="showAddModal.set(false)">
         <div class="walkin-modal" (click)="$event.stopPropagation()">
-          <h2 class="walkin-modal__title">Ajouter un client</h2>
+          <h2 class="walkin-modal__title">Ajouter un client direct</h2>
 
           <div class="walkin-modal__field">
-            <label>Nom du client</label>
-            <input type="text" #nameInput placeholder="Ex: Ousmane Sow" />
+            <label>Nom du client *</label>
+            <input type="text" #nameInput placeholder="Ex: Ousmane Sow" autofocus />
           </div>
 
           <div class="walkin-modal__field">
-            <label>Téléphone</label>
+            <label>Téléphone (Optionnel)</label>
             <input type="tel" #phoneInput placeholder="Ex: +221 77 123 45 67" />
           </div>
 
@@ -220,7 +209,7 @@ const INITIAL_QUEUE: QueueItem[] = [
               class="walkin-modal__submit-btn"
               (click)="addWalkInClient(nameInput.value, phoneInput.value)"
             >
-              Ajouter
+              Valider l'ajout
             </button>
           </div>
         </div>
@@ -236,6 +225,14 @@ export class CoiffeurTicketsPage {
   protected readonly activeTab = signal<'active' | 'history'>('active');
   protected readonly queue = signal<QueueItem[]>(INITIAL_QUEUE);
   protected readonly showAddModal = signal(false);
+
+  protected readonly activeCount = computed(() =>
+    this.queue().filter((q) => q.category === 'active').length
+  );
+
+  protected readonly historyCount = computed(() =>
+    this.queue().filter((q) => q.category === 'history').length
+  );
 
   protected readonly displayedQueue = computed(() => {
     const tab = this.activeTab();

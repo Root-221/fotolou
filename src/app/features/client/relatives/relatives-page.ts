@@ -2,12 +2,21 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { RelativeService } from '../../../shared/services/relative.service';
 import { Relative, RELATION_LABELS } from '../../../shared/models/relative';
 
 @Component({
   selector: 'app-relatives-page',
-  imports: [ClientLayout, PageHeader],
+  imports: [
+    ClientLayout,
+    PageHeader,
+    SkeletonLoaderComponent,
+    EmptyStateComponent,
+    ErrorStateComponent
+  ],
   template: `
     <app-client-layout [showBottomNav]="false" [hasCustomFooter]="true">
       <!-- Fixed Header -->
@@ -30,38 +39,51 @@ import { Relative, RELATION_LABELS } from '../../../shared/models/relative';
 
         <!-- Relatives List -->
         <section class="relatives-page__list" aria-label="Liste des proches">
-          @for (relative of relativeService.relatives(); track relative.id) {
-            <div class="relatives-page__card">
-              <div class="relatives-page__card-avatar" [class]="'relatives-page__card-avatar--' + relative.relation">
-                {{ getAvatarIcon(relative.relation) }}
+          @if (relativeService.loading()) {
+            <app-skeleton-loader type="list" [count]="3" />
+          } @else if (relativeService.error()) {
+            <app-error-state
+              [message]="relativeService.error()!"
+              (retry)="relativeService.loadRelatives()"
+            />
+          } @else {
+            @for (relative of relativeService.relatives(); track relative.id) {
+              <div class="relatives-page__card">
+                <div class="relatives-page__card-avatar" [class]="'relatives-page__card-avatar--' + relative.relation">
+                  {{ getAvatarIcon(relative.relation) }}
+                </div>
+
+                <div class="relatives-page__card-info">
+                  <strong class="relatives-page__card-name">{{ relative.name }}</strong>
+                  <span class="relatives-page__card-meta">
+                    {{ getRelationLabel(relative) }}
+                    @if (relative.phone) {
+                      &bull; {{ relative.phone }}
+                    }
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  class="relatives-page__card-edit-btn"
+                  (click)="editRelative(relative)"
+                  [attr.aria-label]="'Modifier ' + relative.name"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
               </div>
-
-              <div class="relatives-page__card-info">
-                <strong class="relatives-page__card-name">{{ relative.name }}</strong>
-                <span class="relatives-page__card-meta">
-                  {{ getRelationLabel(relative) }}
-                  @if (relative.phone) {
-                    &bull; {{ relative.phone }}
-                  }
-                </span>
-              </div>
-
-              <button
-                type="button"
-                class="relatives-page__card-edit-btn"
-                (click)="editRelative(relative)"
-                [attr.aria-label]="'Modifier ' + relative.name"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
-              </button>
-            </div>
-          }
-
-          @if (relativeService.relatives().length === 0) {
-            <p class="relatives-page__empty">Aucun proche enregistré.</p>
+            } @empty {
+              <app-empty-state
+                icon="user"
+                title="Aucun proche enregistré"
+                description="Ajoutez vos proches pour prendre des tickets pour eux facilement."
+                actionLabel="Ajouter un proche"
+                actionRoute="/client/proches/ajouter"
+              />
+            }
           }
         </section>
       </div>

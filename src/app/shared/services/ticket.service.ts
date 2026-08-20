@@ -1,68 +1,23 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, catchError, of, map } from 'rxjs';
 import { Ticket, TicketTab } from '../models/ticket';
-
-const INITIAL_TICKETS: readonly Ticket[] = [
-  {
-    id: 't-1',
-    salonId: 'king-barber',
-    salonName: 'King Barber',
-    ownerName: 'Moussa Kane',
-    ticketNumber: 6,
-    status: 'your_turn',
-    category: 'active',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 't-2',
-    salonId: 'salon-beaute',
-    salonName: 'Salon de Beauté',
-    ownerName: 'Maman',
-    ticketNumber: 12,
-    status: 'waiting',
-    category: 'active',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 't-3',
-    salonId: 'salon-beaute',
-    salonName: 'Salon de Beauté',
-    ownerName: 'Moi',
-    ticketNumber: 8,
-    status: 'waiting',
-    category: 'active',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 't-4',
-    salonId: 'king-barber',
-    salonName: 'King Barber',
-    ownerName: 'Moi',
-    ticketNumber: 15,
-    status: 'served',
-    category: 'history',
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    servedAt: new Date(Date.now() - 86400000 * 2 + 3600000).toISOString()
-  },
-  {
-    id: 't-5',
-    salonId: 'salon-nefertiti',
-    salonName: 'Salon Nefertiti',
-    ownerName: 'Maman',
-    ticketNumber: 3,
-    status: 'cancelled',
-    category: 'history',
-    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    servedAt: new Date(Date.now() - 86400000 * 5 + 1800000).toISOString()
-  }
-];
+import { API_CONFIG } from '../../core/config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TicketService {
-  readonly activeTab = signal<TicketTab>('active');
-  readonly tickets = signal<readonly Ticket[]>(INITIAL_TICKETS);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = API_CONFIG.baseUrl;
 
+  // ── State Signals ───────────────────────────────────────────
+  readonly activeTab = signal<TicketTab>('active');
+  readonly tickets = signal<readonly Ticket[]>([]);
+  readonly loading = signal<boolean>(false);
+  readonly error = signal<string | null>(null);
+
+  // ── Computed Lists ──────────────────────────────────────────
   readonly displayedTickets = computed(() => {
     const tab = this.activeTab();
     return this.tickets().filter((ticket) => ticket.category === tab);
@@ -76,11 +31,39 @@ export class TicketService {
     this.tickets().filter((t) => t.category === 'history').length
   );
 
-  getTicketById(id: string | null): Ticket {
-    return this.tickets().find((t) => t.id === id) ?? this.tickets()[0];
+  constructor() {
+    this.loadTickets();
   }
 
-  createTicket(salonId: string, salonName: string, ownerName: string): Ticket {
+  loadTickets(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http.get<Ticket[]>(`${this.baseUrl}${API_CONFIG.endpoints.tickets}`).pipe(
+      tap((data) => {
+        this.tickets.set(data);
+        this.loading.set(false);
+      }),
+      catchError((err) => {
+        console.error('[TicketService] Error fetching tickets:', err);
+        this.error.set('Impossible de charger vos tickets.');
+        this.loading.set(false);
+        return of([]);
+      })
+    ).subscribe();
+  }
+
+  getTicketById(id: string | null): Observable<Ticket | null> {
+    if (!id) return of(null);
+    return this.http.get<Ticket>(`${this.baseUrl}${API_CONFIG.endpoints.tickets}/${id}`).pipe(
+      catchError((err) => {
+        console.error(`[TicketService] Error fetching ticket ${id}:`, err);
+        return of(this.tickets().find((t) => t.id === id) || null);
+      })
+    );
+  }
+
+  createTicket(salonId: string, salonName: string, ownerName: string): Observable<Ticket> {
     const activeCount = this.tickets().filter((t) => t.category === 'active').length;
     const newTicket: Ticket = {
       id: `t-${Date.now()}`,
@@ -93,18 +76,64 @@ export class TicketService {
       createdAt: new Date().toISOString()
     };
 
+    // Optimistic UI update
     this.tickets.update((prev) => [newTicket, ...prev]);
     this.activeTab.set('active');
-    return newTicket;
+
+    return this.http.post<Ticket>(`${this.baseUrl}${API_CONFIG.endpoints.tickets}`, newTicket).pipe(
+      tap((savedTicket) => {
+        this.tickets.update((prev) =>
+          prev.map((t) => (t.id === newTicket.id ? savedTicket : t))
+        );
+      }),
+      catchError((err) => {
+        console.warn('[TicketService] API post failed, keeping local ticket:', err);
+        return of(newTicket);
+      })
+    );
   }
 
-  cancelTicket(id: string): void {
+  cancelTicket(id: string): Observable<Ticket | null> {
+    const now = new Date().toISOString();
     this.tickets.update((prev) =>
       prev.map((ticket) =>
         ticket.id === id
-          ? { ...ticket, status: 'cancelled', category: 'history', servedAt: new Date().toISOString() }
+          ? { ...ticket, status: 'cancelled', category: 'history', servedAt: now }
           : ticket
       )
+    );
+
+    return this.http.patch<Ticket>(`${this.baseUrl}${API_CONFIG.endpoints.tickets}/${id}`, {
+      status: 'cancelled',
+      category: 'history',
+      servedAt: now
+    }).pipe(
+      catchError((err) => {
+        console.warn(`[TicketService] Failed to patch cancel ticket ${id}:`, err);
+        return of(null);
+      })
+    );
+  }
+
+  serveTicket(id: string): Observable<Ticket | null> {
+    const now = new Date().toISOString();
+    this.tickets.update((prev) =>
+      prev.map((ticket) =>
+        ticket.id === id
+          ? { ...ticket, status: 'served', category: 'history', servedAt: now }
+          : ticket
+      )
+    );
+
+    return this.http.patch<Ticket>(`${this.baseUrl}${API_CONFIG.endpoints.tickets}/${id}`, {
+      status: 'served',
+      category: 'history',
+      servedAt: now
+    }).pipe(
+      catchError((err) => {
+        console.warn(`[TicketService] Failed to patch serve ticket ${id}:`, err);
+        return of(null);
+      })
     );
   }
 }

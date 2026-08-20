@@ -20,22 +20,22 @@ describe('InstallBanner', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render banner when showBanner signal is true', () => {
+  it('should render popup when showBanner signal is true', () => {
     pwaService.showBanner.set(true);
     const fixture = TestBed.createComponent(InstallBanner);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.install-banner')).toBeTruthy();
-    expect(compiled.textContent).toContain('📱 Installez Fotolou');
+    expect(compiled.querySelector('.install-popup')).toBeTruthy();
+    expect(compiled.textContent).toContain('Installer');
   });
 
-  it('should not render banner when showBanner signal is false', () => {
+  it('should not render popup when showBanner signal is false', () => {
     pwaService.showBanner.set(false);
     const fixture = TestBed.createComponent(InstallBanner);
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.install-banner')).toBeFalsy();
+    expect(compiled.querySelector('.install-popup')).toBeFalsy();
   });
 });

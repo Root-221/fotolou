@@ -5,6 +5,8 @@ import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { StatCard } from '../../../shared/components/stat-card/stat-card';
 import { StatusBadge } from '../../../shared/components/status-badge/status-badge';
 import { ConfirmModal } from '../../../shared/components/confirm-modal/confirm-modal';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { TicketService } from '../../../shared/services/ticket.service';
 import { Ticket } from '../../../shared/models/ticket';
 
@@ -16,6 +18,8 @@ import { Ticket } from '../../../shared/models/ticket';
     StatCard,
     StatusBadge,
     ConfirmModal,
+    SkeletonLoaderComponent,
+    ErrorStateComponent,
     RouterLink
   ],
   template: `
@@ -23,138 +27,153 @@ import { Ticket } from '../../../shared/models/ticket';
       <!-- Fixed Top Header -->
       <app-page-header
         slot="header"
-        title="Ticket"
+        title="Détail du Ticket"
         backRoute="/client/tickets"
       />
 
-      <!-- Scrollable Main Content -->
-      <div class="ticket-detail-page__content">
-        <!-- Status & Title -->
-        <section class="ticket-detail-page__hero">
-          <span
-            class="ticket-detail-page__status-tag"
-            [class.ticket-detail-page__status-tag--completed]="isServed"
-            [class.ticket-detail-page__status-tag--cancelled]="ticket.status === 'cancelled'"
-          >
-            {{ statusTagText }}
-          </span>
+      <!-- Main Content -->
+      @if (loading()) {
+        <div class="ticket-detail-page__loading">
+          <app-skeleton-loader type="card" [count]="2" />
+        </div>
+      } @else if (error() || !ticket) {
+        <div class="ticket-detail-page__error">
+          <app-error-state
+            [message]="error() || 'Ticket introuvable.'"
+            (retry)="loadTicket()"
+          />
+        </div>
+      } @else {
+        <div class="ticket-detail-page__content">
+          <!-- Status & Title -->
+          <section class="ticket-detail-page__hero">
+            <span
+              class="ticket-detail-page__status-tag"
+              [class.ticket-detail-page__status-tag--completed]="isServed"
+              [class.ticket-detail-page__status-tag--cancelled]="ticket.status === 'cancelled'"
+            >
+              {{ statusTagText }}
+            </span>
 
-          <h1>Ticket pour: {{ ticket.ownerName }}</h1>
-          <p>{{ ticket.salonName }} &bull; Mermoz, Dakar</p>
+            <h1>Ticket pour: {{ ticket.ownerName }}</h1>
+            <p>{{ ticket.salonName }} &bull; Dakar</p>
 
-          <!-- Circular Ring Progress (100% full for historical tickets) -->
-          <div class="ticket-detail-page__ring-container">
-            <svg class="ticket-detail-page__ring-svg" viewBox="0 0 200 200">
-              <!-- Background Track -->
-              <circle
-                cx="100"
-                cy="100"
-                r="80"
-                fill="none"
-                stroke="#e2e8f0"
-                stroke-width="12"
-              />
-              <!-- Dynamic Ring Stroke (100% full when served/completed/cancelled) -->
-              <circle
-                cx="100"
-                cy="100"
-                r="80"
-                fill="none"
-                [attr.stroke]="ringColor"
-                stroke-width="12"
-                stroke-linecap="round"
-                stroke-dasharray="502"
-                [attr.stroke-dashoffset]="dashOffset"
-                transform="rotate(-90 100 100)"
-              />
-            </svg>
-            <div class="ticket-detail-page__number-display">
-              {{ ticket.ticketNumber }}
+            <!-- Circular Ring Progress -->
+            <div class="ticket-detail-page__ring-container">
+              <svg class="ticket-detail-page__ring-svg" viewBox="0 0 200 200">
+                <!-- Background Track -->
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="80"
+                  fill="none"
+                  stroke="var(--border-color, #e2e8f0)"
+                  stroke-width="12"
+                />
+                <!-- Dynamic Ring Stroke -->
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="80"
+                  fill="none"
+                  [attr.stroke]="ringColor"
+                  stroke-width="12"
+                  stroke-linecap="round"
+                  stroke-dasharray="502"
+                  [attr.stroke-dashoffset]="dashOffset"
+                  transform="rotate(-90 100 100)"
+                />
+              </svg>
+              <div class="ticket-detail-page__number-display">
+                {{ ticket.ticketNumber }}
+              </div>
             </div>
-          </div>
-        </section>
-
-        <!-- Stats Row (Displayed only for active tickets) -->
-        @if (!isHistory) {
-          <section class="ticket-detail-page__stats">
-            <app-stat-card label="NUMERO EN COURS">
-              {{ queueNumberDisplay }}
-            </app-stat-card>
-
-            <app-stat-card label="STATUT">
-              <app-status-badge [status]="salonStatus" />
-            </app-stat-card>
           </section>
-        }
 
-        <!-- SMS / Completion Info Card -->
-        <section
-          class="ticket-detail-page__sms-card"
-          [class.ticket-detail-page__sms-card--completed]="isServed"
-          [class.ticket-detail-page__sms-card--cancelled]="ticket.status === 'cancelled'"
-        >
-          <div class="ticket-detail-page__sms-icon" aria-hidden="true">
-            @if (isHistory) {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            } @else {
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
-              </svg>
-            }
-          </div>
-          <div class="ticket-detail-page__sms-content">
-            @switch (ticket.status) {
-              @case ('served') {
-                <p>Ce ticket a été <strong>servi avec succès</strong>. Merci d'utiliser Fotolou !</p>
-              }
-              @case ('completed') {
-                <p>Ce ticket a été <strong>servi avec succès</strong>. Merci d'utiliser Fotolou !</p>
-              }
-              @case ('cancelled') {
-                <p>Ce ticket a été <strong>annulé</strong>.</p>
-              }
-              @default {
-                <p>Un SMS sera envoyé à <strong>+221 77 862 70 52</strong> dès que votre tour approchera.</p>
-              }
-            }
-            @if (isHistory && formattedServedAt) {
-              <span class="ticket-detail-page__served-date">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
+          <!-- Stats Row -->
+          @if (!isHistory) {
+            <section class="ticket-detail-page__stats">
+              <app-stat-card label="NUMERO EN COURS">
+                {{ queueNumberDisplay }}
+              </app-stat-card>
+
+              <app-stat-card label="STATUT">
+                <app-status-badge [status]="salonStatus" />
+              </app-stat-card>
+            </section>
+          }
+
+          <!-- SMS / Info Card -->
+          <section
+            class="ticket-detail-page__sms-card"
+            [class.ticket-detail-page__sms-card--completed]="isServed"
+            [class.ticket-detail-page__sms-card--cancelled]="ticket.status === 'cancelled'"
+          >
+            <div class="ticket-detail-page__sms-icon" aria-hidden="true">
+              @if (isHistory) {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                {{ formattedServedAt }}
-              </span>
-            }
-          </div>
-        </section>
-      </div>
+              } @else {
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                </svg>
+              }
+            </div>
+            <div class="ticket-detail-page__sms-content">
+              @switch (ticket.status) {
+                @case ('served') {
+                  <p>Ce ticket a été <strong>servi avec succès</strong>. Merci d'utiliser Fotolou !</p>
+                }
+                @case ('completed') {
+                  <p>Ce ticket a été <strong>servi avec succès</strong>. Merci d'utiliser Fotolou !</p>
+                }
+                @case ('cancelled') {
+                  <p>Ce ticket a été <strong>annulé</strong>.</p>
+                }
+                @default {
+                  <p>Un SMS sera envoyé à <strong>+221 77 862 70 52</strong> dès que votre tour approchera.</p>
+                }
+              }
+              @if (isHistory && formattedServedAt) {
+                <span class="ticket-detail-page__served-date">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  {{ formattedServedAt }}
+                </span>
+              }
+            </div>
+          </section>
+        </div>
+      }
 
       <!-- Fixed Bottom Action Bar -->
-      <div slot="footer" class="ticket-detail-page__fixed-footer">
-        @if (isHistory) {
-          <a routerLink="/client/home" class="ticket-detail-page__new-ticket-btn">
-            <span>Prendre un nouveau ticket</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"/>
-              <polyline points="12 5 19 12 12 19"/>
-            </svg>
-          </a>
-        } @else {
-          <button type="button" class="ticket-detail-page__cancel-btn" (click)="showCancelModal.set(true)">
-            <span class="ticket-detail-page__cancel-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
+      @if (ticket && !loading()) {
+        <div slot="footer" class="ticket-detail-page__fixed-footer">
+          @if (isHistory) {
+            <a routerLink="/client/home" class="ticket-detail-page__new-ticket-btn">
+              <span>Prendre un nouveau ticket</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
               </svg>
-            </span>
-            <span>Quitter la file</span>
-          </button>
-        }
-      </div>
+            </a>
+          } @else {
+            <button type="button" class="ticket-detail-page__cancel-btn" (click)="showCancelModal.set(true)">
+              <span class="ticket-detail-page__cancel-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+              </span>
+              <span>Quitter la file</span>
+            </button>
+          }
+        </div>
+      }
     </app-client-layout>
 
     <!-- Confirmation Modal -->
@@ -176,15 +195,38 @@ export class TicketDetailPage implements OnInit {
   private readonly router = inject(Router);
   private readonly ticketService = inject(TicketService);
 
-  protected ticket!: Ticket;
+  protected ticket: Ticket | null = null;
+  protected readonly loading = signal(true);
+  protected readonly error = signal<string | null>(null);
   protected readonly showCancelModal = signal(false);
 
   ngOnInit(): void {
+    this.loadTicket();
+  }
+
+  loadTicket(): void {
+    this.loading.set(true);
+    this.error.set(null);
     const id = this.route.snapshot.paramMap.get('id');
-    this.ticket = this.ticketService.getTicketById(id);
+
+    this.ticketService.getTicketById(id).subscribe({
+      next: (found) => {
+        this.ticket = found;
+        if (!found) {
+          this.error.set('Ticket introuvable');
+        }
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('[TicketDetailPage] Error loading ticket:', err);
+        this.error.set('Impossible de charger le ticket.');
+        this.loading.set(false);
+      }
+    });
   }
 
   protected get isHistory(): boolean {
+    if (!this.ticket) return false;
     return (
       this.ticket.category === 'history' ||
       this.ticket.status === 'served' ||
@@ -194,11 +236,12 @@ export class TicketDetailPage implements OnInit {
   }
 
   protected get isServed(): boolean {
+    if (!this.ticket) return false;
     return this.ticket.status === 'served' || this.ticket.status === 'completed';
   }
 
   protected get formattedServedAt(): string {
-    if (!this.ticket.servedAt) return '';
+    if (!this.ticket?.servedAt) return '';
     const date = new Date(this.ticket.servedAt);
     return date.toLocaleDateString('fr-SN', {
       day: '2-digit',
@@ -210,6 +253,7 @@ export class TicketDetailPage implements OnInit {
   }
 
   protected get statusTagText(): string {
+    if (!this.ticket) return '';
     switch (this.ticket.status) {
       case 'served':
       case 'completed':
@@ -225,33 +269,31 @@ export class TicketDetailPage implements OnInit {
   }
 
   protected get ringColor(): string {
+    if (!this.ticket) return '#1E5AF0';
     switch (this.ticket.status) {
       case 'served':
       case 'completed':
-        return '#16a34a'; // Vibrant Green for served
+        return '#10b981';
       case 'cancelled':
-        return '#ef4444'; // Red for cancelled
+        return '#ef4444';
       case 'your_turn':
       case 'waiting':
       default:
-        return '#2563eb'; // Vibrant Blue for active
+        return '#1E5AF0';
     }
   }
 
   protected get dashOffset(): number {
     if (this.isHistory) {
-      return 0; // 100% Full ring
+      return 0;
     }
-    return 140; // Active ring arc
+    return 140;
   }
 
   protected get queueNumberDisplay(): string {
-    if (this.isServed) {
-      return 'Servi';
-    }
-    if (this.ticket.status === 'cancelled') {
-      return 'Annulé';
-    }
+    if (!this.ticket) return '-';
+    if (this.isServed) return 'Servi';
+    if (this.ticket.status === 'cancelled') return 'Annulé';
     return '3';
   }
 
@@ -260,8 +302,10 @@ export class TicketDetailPage implements OnInit {
   }
 
   protected confirmLeaveQueue(): void {
+    if (!this.ticket) return;
     this.showCancelModal.set(false);
-    this.ticketService.cancelTicket(this.ticket.id);
-    this.router.navigate(['/client/tickets']);
+    this.ticketService.cancelTicket(this.ticket.id).subscribe(() => {
+      this.router.navigate(['/client/tickets']);
+    });
   }
 }

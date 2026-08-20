@@ -25,6 +25,7 @@ import { CoiffeurPhotosPage } from './features/coiffeur/photos/coiffeur-photos-p
 import { SettingsPage } from './features/shared/settings/settings-page';
 import { HelpSupportPage } from './features/shared/support/help-support-page';
 import { OnboardingPage } from './features/onboarding/onboarding-page';
+import { NotFoundPage } from './features/shared/not-found/not-found-page';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'onboarding' },
@@ -57,5 +58,6 @@ export const routes: Routes = [
   { path: 'coiffeur/settings/photos', component: CoiffeurPhotosPage },
   { path: 'coiffeur/support', component: HelpSupportPage },
   { path: 'home', pathMatch: 'full', redirectTo: 'auth/login' },
-  { path: '**', redirectTo: 'onboarding' }
+  { path: '404', component: NotFoundPage },
+  { path: '**', component: NotFoundPage }
 ];

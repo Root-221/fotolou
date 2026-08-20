@@ -32,9 +32,9 @@ import { Order } from '../../../shared/models/order';
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
           </div>
-          <h1>Choisissez votre mode de commande</h1>
+          <h1>Choisissez votre mode de confirmation</h1>
           <p>
-            Commandez directement via WhatsApp avec un message pré-rempli ou appelez-nous immédiatement.
+            Commandez directement via WhatsApp avec le récapitulatif pré-rempli ou appelez notre équipe.
           </p>
         </section>
 
@@ -108,15 +108,16 @@ export class OrderConfirmationPage implements OnInit {
       return;
     }
 
-    this.currentOrder = this.orderService.createOrder(
+    this.orderService.createOrder(
       items,
       this.cartService.subtotal(),
       this.cartService.deliveryFee(),
       this.cartService.totalPrice(),
       'whatsapp'
-    );
-
-    this.cartService.clearCart();
+    ).subscribe((savedOrder) => {
+      this.currentOrder = savedOrder;
+      this.cartService.clearCart();
+    });
   }
 
   protected formatPrice(val: number): string {

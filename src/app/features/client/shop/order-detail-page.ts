@@ -1,7 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { OrderService } from '../../../shared/services/order.service';
 import { Order } from '../../../shared/models/order';
 
@@ -9,19 +11,32 @@ import { Order } from '../../../shared/models/order';
   selector: 'app-order-detail-page',
   imports: [
     ClientLayout,
-    PageHeader
+    PageHeader,
+    SkeletonLoaderComponent,
+    ErrorStateComponent
   ],
   template: `
     <app-client-layout [showBottomNav]="false" [hasCustomFooter]="true">
       <!-- Fixed Header Slot -->
       <app-page-header
         slot="header"
-        title=""
+        title="Détail de la commande"
         backRoute="/client/boutique/commandes"
       />
 
-      <!-- Scrollable Content -->
-      @if (order) {
+      <!-- Main Content -->
+      @if (loading()) {
+        <div class="order-detail-page__loading">
+          <app-skeleton-loader type="card" [count]="2" />
+        </div>
+      } @else if (error() || !order) {
+        <div class="order-detail-page__error">
+          <app-error-state
+            [message]="error() || 'Commande introuvable.'"
+            (retry)="loadOrder()"
+          />
+        </div>
+      } @else {
         <div class="order-detail-page__content">
           <!-- Order Header Section -->
           <section class="order-detail-page__hero">
@@ -30,7 +45,13 @@ import { Order } from '../../../shared/models/order';
               <h1 class="order-detail-page__number">#{{ formattedOrderNumber }}</h1>
             </div>
 
-            <span class="order-detail-page__status">{{ statusLabel }}</span>
+            <span
+              class="order-detail-page__status"
+              [class.order-detail-page__status--delivered]="order.status === 'livre'"
+              [class.order-detail-page__status--cancelled]="order.status === 'annule'"
+            >
+              {{ statusLabel }}
+            </span>
           </section>
 
           <!-- Items List -->
@@ -52,7 +73,7 @@ import { Order } from '../../../shared/models/order';
       }
 
       <!-- Fixed Bottom Summary Footer Slot -->
-      @if (order) {
+      @if (order && !loading()) {
         <div slot="footer" class="order-detail-page__fixed-footer">
           <section class="order-detail-page__summary">
             <div class="order-detail-page__summary-row">
@@ -83,11 +104,32 @@ export class OrderDetailPage implements OnInit {
   private readonly orderService = inject(OrderService);
 
   protected order: Order | null = null;
+  protected readonly loading = signal(true);
+  protected readonly error = signal<string | null>(null);
 
   ngOnInit(): void {
+    this.loadOrder();
+  }
+
+  loadOrder(): void {
+    this.loading.set(true);
+    this.error.set(null);
     const id = this.route.snapshot.paramMap.get('id');
-    const found = this.orderService.orders().find((o) => o.id === id) ?? this.orderService.orders()[0];
-    this.order = found;
+
+    this.orderService.getOrderById(id).subscribe({
+      next: (found) => {
+        this.order = found;
+        if (!found) {
+          this.error.set('Commande introuvable');
+        }
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('[OrderDetailPage] Error loading order:', err);
+        this.error.set('Impossible de charger la commande.');
+        this.loading.set(false);
+      }
+    });
   }
 
   protected get formattedOrderNumber(): string {
@@ -105,7 +147,7 @@ export class OrderDetailPage implements OnInit {
       case 'annule':
         return 'Annulé';
       default:
-        return 'En livraison';
+        return 'En cours';
     }
   }
 

@@ -61,7 +61,7 @@ import { TicketOwner } from '../../../shared/models/ticket-owner';
       <!-- Fixed Bottom Action Bar -->
       <div slot="footer" class="ticket-owner-page__fixed-footer">
         <button type="button" class="ticket-owner-page__submit-btn" (click)="proceedToPayment()">
-          <span>Continuer le paiement</span>
+          <span>Confirmer mon ticket</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"/>
             <polyline points="12 5 19 12 12 19"/>
@@ -103,13 +103,23 @@ export class TicketOwnerPage implements OnInit {
   }
 
   protected proceedToPayment(): void {
-    const salon = this.salonService.getSalonById(this.salonId);
-    const owner = this.selectedOwner();
-    const targetName = owner.isCustomInput
-      ? this.customOwnerName() || 'Autre personne'
-      : owner.name;
+    this.salonService.getSalonById(this.salonId).subscribe({
+      next: (salon) => {
+        const salonName = salon?.name || 'King Barber';
+        const owner = this.selectedOwner();
+        const targetName = owner.isCustomInput
+          ? this.customOwnerName() || 'Autre personne'
+          : owner.name;
 
-    this.ticketService.createTicket(salon.id, salon.name, targetName);
-    this.router.navigate(['/client/tickets']);
+        this.ticketService.createTicket(this.salonId, salonName, targetName).subscribe(() => {
+          this.router.navigate(['/client/tickets']);
+        });
+      },
+      error: () => {
+        this.ticketService.createTicket(this.salonId, 'King Barber', 'Awa Diop').subscribe(() => {
+          this.router.navigate(['/client/tickets']);
+        });
+      }
+    });
   }
 }

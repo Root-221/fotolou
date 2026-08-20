@@ -6,30 +6,34 @@
   position: fixed;
   right: 0;
   bottom: 0;
-  left: 50%;
-  z-index: 20;
+  left: 0;
+  width: 100%;
+  z-index: 50;
   display: grid;
-  width: min(100%, 390px);
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid #eef1f6;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 -8px 22px rgba(17, 24, 39, 0.04);
-  transform: translateX(-50%);
+  border-top: 1px solid var(--border-color, #eef1f6);
+  background: var(--bg-surface, rgba(255, 255, 255, 0.98));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .bottom-navigation__item {
   display: grid;
-  min-height: 68px;
+  min-height: 64px;
   align-content: center;
   justify-items: center;
   gap: 4px;
-  color: #647084;
-  font-size: 0.68rem;
+  color: var(--text-secondary, #647084);
+  font-size: 0.6875rem;
   font-weight: 700;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
 .bottom-navigation__item--active {
-  color: var(--primary);
+  color: var(--primary, #1E5AF0);
 }
 
 .bottom-navigation__icon {
@@ -37,16 +41,16 @@
   width: 24px;
   height: 24px;
   place-items: center;
-}
 
-.bottom-navigation__icon svg {
-  width: 21px;
-  height: 21px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
+  svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+  }
 }
 
 .bottom-navigation__item--active .bottom-navigation__icon svg {
@@ -57,4 +61,21 @@
 .bottom-navigation__item--active .bottom-navigation__icon[data-icon='tickets'] svg,
 .bottom-navigation__item--active .bottom-navigation__icon[data-icon='shop'] svg {
   fill: none;
+}
+
+// ── Dark Mode ────────────────────────────────────────────────
+:host-context(body.dark-theme) {
+  .bottom-navigation {
+    background: rgba(28, 37, 65, 0.96) !important;
+    border-top-color: #334155 !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .bottom-navigation__item {
+    color: #94a3b8;
+  }
+
+  .bottom-navigation__item--active {
+    color: #3b82f6 !important;
+  }
 }

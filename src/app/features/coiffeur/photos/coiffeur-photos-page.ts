@@ -18,7 +18,7 @@ import { PageHeader } from '../../../shared/components/page-header/page-header';
         backRoute="/coiffeur/profile"
       />
 
-      <!-- Scrollable Main Content -->
+      <!-- Main Content -->
       <div class="photos-page__content">
 
         @if (showSuccess()) {
@@ -139,7 +139,7 @@ export class CoiffeurPhotosPage {
   protected readonly salonPreview = signal<string | null>(null);
   protected readonly showSuccess = signal(false);
 
-  protected readonly defaultSalonBanner = 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop';
+  protected readonly defaultSalonBanner = 'images/salons/king-barber-cover.png';
 
   protected onProfileFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -170,6 +170,6 @@ export class CoiffeurPhotosPage {
     globalThis.setTimeout(() => {
       this.showSuccess.set(false);
       this.router.navigate(['/coiffeur/profile']);
-    }, 1800);
+    }, 1500);
   }
 }

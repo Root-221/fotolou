@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
 import { TicketCard } from '../../../shared/components/ticket-card/ticket-card';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { TicketService } from '../../../shared/services/ticket.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { TicketTab } from '../../../shared/models/ticket';
@@ -12,11 +15,14 @@ import { TicketTab } from '../../../shared/models/ticket';
   imports: [
     ClientLayout,
     LocationHeader,
-    TicketCard
+    TicketCard,
+    SkeletonLoaderComponent,
+    EmptyStateComponent,
+    ErrorStateComponent
   ],
   template: `
     <app-client-layout activeNav="tickets">
-      <!-- Header Slot with notification icon only (Location hidden) -->
+      <!-- Header Slot -->
       <app-location-header
         slot="header"
         [showLocation]="false"
@@ -24,7 +30,7 @@ import { TicketTab } from '../../../shared/models/ticket';
         (notificationClick)="goToNotifications()"
       />
 
-      <!-- Scrollable Content Body -->
+      <!-- Content Body -->
       <div class="my-tickets-page__content">
         <!-- Segmented Tab Selector -->
         <div class="my-tickets-page__tabs">
@@ -42,20 +48,45 @@ import { TicketTab } from '../../../shared/models/ticket';
             [class.my-tickets-page__tab--active]="activeTab() === 'history'"
             (click)="selectTab('history')"
           >
-            Historiques ({{ ticketService.historyCount() }})
+            Historique ({{ ticketService.historyCount() }})
           </button>
         </div>
 
-        <!-- Ticket Cards List -->
-        <div class="my-tickets-page__list">
-          @for (ticket of ticketService.displayedTickets(); track ticket.id) {
-            <app-ticket-card [ticket]="ticket" />
-          } @empty {
-            <div class="my-tickets-page__empty">
-              <p>Aucun ticket dans cette section.</p>
-            </div>
-          }
-        </div>
+        <!-- Loading Skeletons -->
+        @if (ticketService.loading()) {
+          <div class="my-tickets-page__list">
+            <app-skeleton-loader type="ticket" [count]="3" />
+          </div>
+        } @else if (ticketService.error()) {
+          <!-- Error State -->
+          <app-error-state
+            [message]="ticketService.error()!"
+            (retry)="ticketService.loadTickets()"
+          />
+        } @else {
+          <!-- Ticket Cards List -->
+          <div class="my-tickets-page__list">
+            @for (ticket of ticketService.displayedTickets(); track ticket.id) {
+              <app-ticket-card [ticket]="ticket" />
+            } @empty {
+              @if (activeTab() === 'active') {
+                <app-empty-state
+                  icon="ticket"
+                  title="Aucun ticket en cours"
+                  description="Vous n'avez pas de ticket actif pour le moment. Trouvez un salon et rejoignez la file d'attente !"
+                  actionLabel="Trouver un salon"
+                  actionRoute="/client/home"
+                />
+              } @else {
+                <app-empty-state
+                  icon="ticket"
+                  title="Aucun historique"
+                  description="Vos anciens tickets terminés ou annulés apparaîtront ici."
+                />
+              }
+            }
+          </div>
+        }
       </div>
     </app-client-layout>
   `,

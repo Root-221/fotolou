@@ -1,138 +1,244 @@
 :host {
-  display: block;
-  position: fixed;
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px)); // Above bottom navigation bar
-  left: 0;
-  right: 0;
-  z-index: 999;
-  padding: 0 16px;
-  pointer-events: none;
+  display: contents;
+}
 
-  @media (min-width: 768px) {
-    bottom: 24px;
-    left: auto;
-    right: 24px;
-    padding: 0;
-    max-width: 400px;
+// ── Backdrop ──────────────────────────────────────────────────
+.install-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0;
+  animation: popup-fade-in 0.25s ease-out forwards;
+
+  @media (min-width: 640px) {
+    align-items: center;
+    padding: 20px;
   }
 }
 
-.install-banner {
-  pointer-events: all;
-  margin: 0 auto;
+@keyframes popup-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ── Popup Box ─────────────────────────────────────────────────
+.install-popup {
+  position: relative;
+  width: 100%;
   max-width: 440px;
   background: #ffffff;
-  border-radius: 20px;
-  box-shadow:
-    0 8px 32px rgba(30, 90, 240, 0.16),
-    0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1.5px solid rgba(30, 90, 240, 0.14);
-  padding: 14px 16px;
-  animation: install-banner-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes install-banner-in {
-  from {
-    opacity: 0;
-    transform: translateY(24px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.install-banner__main {
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
+  animation: popup-slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @media (min-width: 640px) {
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  }
 }
 
-.install-banner__header {
+@keyframes popup-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────
+.install-popup__header {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
 }
 
-.install-banner__icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+.install-popup__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   flex-shrink: 0;
   object-fit: cover;
   background: #1E5AF0;
-  box-shadow: 0 3px 10px rgba(30, 90, 240, 0.2);
+  box-shadow: 0 4px 14px rgba(30, 90, 240, 0.25);
 }
 
-.install-banner__text {
+.install-popup__title-wrap {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  min-width: 0;
+  gap: 2px;
   flex: 1;
+  min-width: 0;
 }
 
-.install-banner__title {
-  font-size: 0.9375rem;
+.install-popup__title {
+  font-size: 1.0625rem;
   font-weight: 800;
   color: #0f172a;
   line-height: 1.25;
-}
-
-.install-banner__desc {
-  font-size: 0.775rem;
-  color: #475569;
-  line-height: 1.35;
   margin: 0;
 }
 
-.install-banner__actions {
+.install-popup__tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1E5AF0;
+}
+
+.install-popup__close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.25rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #475569;
+  }
+}
+
+// ── Body ──────────────────────────────────────────────────────
+.install-popup__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.install-popup__desc {
+  font-size: 0.84375rem;
+  color: #475569;
+  line-height: 1.45;
+  margin: 0;
+}
+
+// ── iOS Steps ─────────────────────────────────────────────────
+.install-popup__ios-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.install-popup__ios-step {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 10px;
 }
 
-.install-banner__btn {
+.install-popup__ios-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #1E5AF0;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.install-popup__ios-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #1E5AF0;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &--check {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+}
+
+.install-popup__ios-text {
+  font-size: 0.8125rem;
+  color: #334155;
+  line-height: 1.35;
+  flex: 1;
+
+  strong {
+    color: #0f172a;
+  }
+}
+
+// ── Actions ───────────────────────────────────────────────────
+.install-popup__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.install-popup__btn {
   border: none;
-  cursor: pointer;
   font-family: inherit;
   font-weight: 700;
+  border-radius: 14px;
+  padding: 13px 20px;
+  font-size: 0.875rem;
+  cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
-  &--dismiss {
-    background: transparent;
-    color: #94a3b8;
-    font-size: 1.1rem;
-    padding: 8px 12px;
-    border-radius: 10px;
-    line-height: 1;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &--secondary {
+    flex: 1;
+    background: #f1f5f9;
+    color: #475569;
 
     &:hover {
-      color: #475569;
-      background: #f1f5f9;
-    }
-
-    &:active {
-      transform: scale(0.95);
+      background: #e2e8f0;
+      color: #0f172a;
     }
   }
 
-  &--install {
-    flex: 1;
+  &--primary {
+    flex: 2;
     background: #1E5AF0;
     color: #ffffff;
-    font-size: 0.875rem;
-    padding: 10px 18px;
-    border-radius: 12px;
-    text-align: center;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(30, 90, 240, 0.25);
+    box-shadow: 0 4px 14px rgba(30, 90, 240, 0.3);
 
     &:hover {
       background: #1a4fd6;
       transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(30, 90, 240, 0.3);
+      box-shadow: 0 6px 18px rgba(30, 90, 240, 0.4);
     }
 
     &:active {
@@ -143,36 +249,57 @@
 
 // ── Dark Mode ─────────────────────────────────────────────────
 :host-context(body.dark-theme) {
-  .install-banner {
+  .install-popup {
     background: #1c2541 !important;
-    border-color: #334155 !important;
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6) !important;
   }
 
-  .install-banner__title {
+  .install-popup__title {
     color: #ffffff !important;
   }
 
-  .install-banner__desc {
+  .install-popup__tag {
+    color: #60a5fa !important;
+  }
+
+  .install-popup__desc {
     color: #cbd5e1 !important;
   }
 
-  .install-banner__btn--dismiss {
+  .install-popup__close-btn {
     color: #94a3b8 !important;
 
     &:hover {
-      color: #ffffff !important;
       background: #334155 !important;
+      color: #ffffff !important;
     }
   }
 
-  .install-banner__btn--install {
-    background: #2563eb !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+  .install-popup__ios-steps {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+  }
+
+  .install-popup__ios-text {
+    color: #cbd5e1 !important;
+
+    strong {
+      color: #ffffff !important;
+    }
+  }
+
+  .install-popup__btn--secondary {
+    background: #334155 !important;
+    color: #cbd5e1 !important;
 
     &:hover {
-      background: #1d4ed8 !important;
+      background: #475569 !important;
+      color: #ffffff !important;
     }
+  }
+
+  .install-popup__btn--primary {
+    background: #2563eb !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4) !important;
   }
 }

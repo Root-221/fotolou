@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
+import { TicketService } from '../../../shared/services/ticket.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 
 interface RecentActivity {
@@ -29,16 +30,16 @@ interface RecentActivity {
         (notificationClick)="goToNotifications()"
       />
 
-      <!-- Scrollable Main Content Body -->
+      <!-- Content Body -->
       <div class="coiffeur-home">
-        <!-- Hero Card (Screenshot 1) -->
+        <!-- Hero Card -->
         <section class="coiffeur-hero">
           <div class="coiffeur-hero__overlay"></div>
 
           <div class="coiffeur-hero__content">
             <span class="coiffeur-hero__label">CLIENTS EN ATTENTE</span>
             <div class="coiffeur-hero__main-row">
-              <span class="coiffeur-hero__count">12</span>
+              <span class="coiffeur-hero__count">{{ ticketService.activeCount() }}</span>
 
               <div class="coiffeur-hero__right">
                 <span class="coiffeur-hero__trend">
@@ -46,7 +47,7 @@ interface RecentActivity {
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                     <polyline points="17 6 23 6 23 12"/>
                   </svg>
-                  +18% vs hier
+                  File active
                 </span>
 
                 <!-- Toggle Switch -->
@@ -67,25 +68,25 @@ interface RecentActivity {
         <!-- Stats Row Cards -->
         <section class="coiffeur-stats">
           <div class="coiffeur-stat-card">
-            <span class="coiffeur-stat-card__label">EN COURS</span>
-            <span class="coiffeur-stat-card__val">5</span>
+            <span class="coiffeur-stat-card__label">EN ATTENTE</span>
+            <span class="coiffeur-stat-card__val">{{ ticketService.activeCount() }}</span>
             <div class="coiffeur-stat-card__bar-track">
-              <div class="coiffeur-stat-card__bar-fill coiffeur-stat-card__bar-fill--current" style="width: 40%;"></div>
+              <div class="coiffeur-stat-card__bar-fill coiffeur-stat-card__bar-fill--current" [style.width.%]="ticketService.activeCount() * 20"></div>
             </div>
           </div>
 
           <div class="coiffeur-stat-card">
             <span class="coiffeur-stat-card__label">SERVIS</span>
-            <span class="coiffeur-stat-card__val">25</span>
+            <span class="coiffeur-stat-card__val">{{ ticketService.historyCount() }}</span>
             <div class="coiffeur-stat-card__bar-track">
-              <div class="coiffeur-stat-card__bar-fill coiffeur-stat-card__bar-fill--served" style="width: 80%;"></div>
+              <div class="coiffeur-stat-card__bar-fill coiffeur-stat-card__bar-fill--served" [style.width.%]="ticketService.historyCount() * 20"></div>
             </div>
           </div>
         </section>
 
         <!-- Recent Activity Section -->
         <section class="coiffeur-activity">
-          <h2 class="coiffeur-activity__title">Activité récente</h2>
+          <h2 class="coiffeur-activity__title">Activité récente du salon</h2>
 
           <div class="coiffeur-activity__list">
             @for (item of recentActivities; track item.id) {
@@ -117,6 +118,7 @@ interface RecentActivity {
 })
 export class CoiffeurHomePage {
   private readonly router = inject(Router);
+  protected readonly ticketService = inject(TicketService);
   protected readonly notificationService = inject(NotificationService);
 
   protected readonly isQueueOpen = signal(true);
@@ -126,15 +128,15 @@ export class CoiffeurHomePage {
       id: 'act-1',
       initial: 'K',
       name: 'Karim Fall',
-      date: 'Hier, 14h36',
+      date: 'Aujourd\'hui, 13h15',
       status: 'SERVI',
       avatarBg: '#fef3c7'
     },
     {
       id: 'act-2',
       initial: 'S',
-      name: 'Saliou',
-      date: '11 Oct, 16h14',
+      name: 'Saliou Ndiaye',
+      date: 'Hier, 16h40',
       status: 'ANNULÉ',
       avatarBg: '#e0e7ff'
     }

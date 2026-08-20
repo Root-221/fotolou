@@ -1,11 +1,14 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { SearchBar } from '../../../shared/components/search-bar/search-bar';
 import { ProductCard } from '../../../shared/components/product-card/product-card';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
+import { ProductService } from '../../../shared/services/product.service';
 import { CartService } from '../../../shared/services/cart.service';
 import { NotificationService } from '../../../shared/services/notification.service';
-import { PRODUCTS_MOCK, SHOP_CATEGORIES_MOCK } from '../../../shared/data/products.mock';
 
 @Component({
   selector: 'app-shop-page',
@@ -13,6 +16,9 @@ import { PRODUCTS_MOCK, SHOP_CATEGORIES_MOCK } from '../../../shared/data/produc
     ClientLayout,
     SearchBar,
     ProductCard,
+    SkeletonLoaderComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
     RouterLink
   ],
   template: `
@@ -53,49 +59,75 @@ import { PRODUCTS_MOCK, SHOP_CATEGORIES_MOCK } from '../../../shared/data/produc
         </div>
       </header>
 
-      <!-- Scrollable Content -->
+      <!-- Main Content -->
       <div class="shop-page__content">
         <!-- Search Input -->
         <div class="shop-page__search">
           <app-search-bar
-            placeholder="Rechercher un produit..."
-            [value]="searchQuery()"
-            (valueChange)="searchQuery.set($event)"
+            placeholder="Rechercher un produit, marque..."
+            [value]="productService.searchQuery()"
+            (valueChange)="productService.searchQuery.set($event)"
           />
         </div>
 
         <!-- Categories Section -->
-        <section class="shop-page__categories-section">
-          <h2 class="shop-page__section-title">Catégories</h2>
-          <div class="shop-page__categories-scroll">
-            @for (cat of categories; track cat.id) {
-              <button
-                type="button"
-                class="shop-page__category-item"
-                [class.shop-page__category-item--active]="selectedCategory() === cat.id"
-                (click)="toggleCategory(cat.id)"
-              >
-                <div class="shop-page__category-thumb">
-                  <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
-                </div>
-                <span class="shop-page__category-name">{{ cat.name }}</span>
-              </button>
-            }
-          </div>
-        </section>
+        @if (productService.categories().length > 0) {
+          <section class="shop-page__categories-section">
+            <h2 class="shop-page__section-title">Catégories</h2>
+            <div class="shop-page__categories-scroll">
+              @for (cat of productService.categories(); track cat.id) {
+                <button
+                  type="button"
+                  class="shop-page__category-item"
+                  [class.shop-page__category-item--active]="productService.selectedCategory() === cat.id"
+                  (click)="productService.toggleCategory(cat.id)"
+                >
+                  <div class="shop-page__category-thumb">
+                    <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
+                  </div>
+                  <span class="shop-page__category-name">{{ cat.name }}</span>
+                </button>
+              }
+            </div>
+          </section>
+        }
 
         <!-- Products Grid Section -->
         <section class="shop-page__products-section">
-          <h2 class="shop-page__section-title">Produits</h2>
-
-          <div class="shop-page__products-grid">
-            @for (product of filteredProducts(); track product.id) {
-              <app-product-card [product]="product" />
+          <div class="shop-page__section-header">
+            <h2 class="shop-page__section-title">Produits disponibles</h2>
+            @if (productService.selectedCategory()) {
+              <button
+                type="button"
+                class="shop-page__reset-filter"
+                (click)="productService.selectedCategory.set(null)"
+              >
+                Réinitialiser le filtre
+              </button>
             }
           </div>
 
-          @if (filteredProducts().length === 0) {
-            <p class="shop-page__empty">Aucun produit ne correspond à votre recherche.</p>
+          @if (productService.loading()) {
+            <app-skeleton-loader type="product" [count]="6" />
+          } @else if (productService.error()) {
+            <app-error-state
+              [message]="productService.error()!"
+              (retry)="productService.loadAll()"
+            />
+          } @else {
+            <div class="shop-page__products-grid">
+              @for (product of productService.filteredProducts(); track product.id) {
+                <app-product-card [product]="product" />
+              }
+            </div>
+
+            @if (productService.filteredProducts().length === 0) {
+              <app-empty-state
+                icon="shop"
+                title="Aucun produit trouvé"
+                description="Aucun article ne correspond à vos critères de recherche. Essayez un autre mot-clé ou filtre."
+              />
+            }
           }
         </section>
       </div>
@@ -105,35 +137,9 @@ import { PRODUCTS_MOCK, SHOP_CATEGORIES_MOCK } from '../../../shared/data/produc
 })
 export class ShopPage {
   private readonly router = inject(Router);
+  protected readonly productService = inject(ProductService);
   protected readonly cartService = inject(CartService);
   protected readonly notificationService = inject(NotificationService);
-
-  protected readonly categories = SHOP_CATEGORIES_MOCK;
-  protected readonly searchQuery = signal('');
-  protected readonly selectedCategory = signal<string | null>(null);
-
-  protected readonly filteredProducts = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    const cat = this.selectedCategory();
-
-    return PRODUCTS_MOCK.filter((p) => {
-      const matchesCat = cat ? p.categoryId === cat : true;
-      const matchesQuery = query
-        ? p.title.toLowerCase().includes(query) ||
-          p.brand.toLowerCase().includes(query) ||
-          p.description.toLowerCase().includes(query)
-        : true;
-      return matchesCat && matchesQuery;
-    });
-  });
-
-  protected toggleCategory(catId: string): void {
-    if (this.selectedCategory() === catId) {
-      this.selectedCategory.set(null);
-    } else {
-      this.selectedCategory.set(catId);
-    }
-  }
 
   protected goToNotifications(): void {
     this.router.navigate(['/client/notifications']);

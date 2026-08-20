@@ -15,31 +15,22 @@ export type PwaPlatform = 'ios' | 'android' | 'desktop' | 'other';
 export class PwaService implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
-  private readonly STORAGE_KEY = 'fotolou_pwa_dismissed_at';
-  private readonly SNOOZE_DAYS = 7;
 
   // ── Reactive State ──────────────────────────────────────────
   readonly isStandalone = signal<boolean>(false);
   readonly platform = signal<PwaPlatform>('other');
   readonly isMobile = signal<boolean>(false);
   readonly canPromptNative = signal<boolean>(false);
-  readonly showBanner = signal<boolean>(false);
-  readonly showGuideModal = signal<boolean>(false);
+  readonly showBanner = signal<boolean>(true);
 
   // ── Derived State ───────────────────────────────────────────
   readonly isInstalled = computed(() => this.isStandalone());
   readonly isIos = computed(() => this.platform() === 'ios');
   readonly isAndroid = computed(() => this.platform() === 'android');
-
-  // Can be installed or guided
-  readonly isInstallable = computed(() => {
-    if (this.isStandalone()) return false;
-    return this.canPromptNative() || this.isIos() || this.isAndroid() || this.isMobile();
-  });
+  readonly isInstallable = computed(() => !this.isStandalone());
 
   private deferredPrompt: BeforeInstallPromptEvent | null = null;
   private standaloneMediaQueryList: MediaQueryList | null = null;
-  private autoShowTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     if (!this.isBrowser) return;
@@ -47,7 +38,7 @@ export class PwaService implements OnDestroy {
     this.detectPlatform();
     this.detectStandaloneMode();
     this.setupListeners();
-    this.checkInitialPrompt();
+    this.evaluateBannerVisibility();
   }
 
   ngOnDestroy(): void {
@@ -71,11 +62,12 @@ export class PwaService implements OnDestroy {
     const isAndroidDevice = /android/i.test(ua);
 
     // Mobile check
-    const isMobileDevice =
+    const isMobileDevice = Boolean(
       isIosDevice ||
       isAndroidDevice ||
       /mobile|touch|tablet|silk|kindle/i.test(ua) ||
-      (window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+      (window.matchMedia && window.matchMedia('(max-width: 768px)')?.matches)
+    );
 
     if (isIosDevice) {
       this.platform.set('ios');
@@ -129,7 +121,6 @@ export class PwaService implements OnDestroy {
     if (e.matches) {
       this.isStandalone.set(true);
       this.showBanner.set(false);
-      this.showGuideModal.set(false);
     }
   };
 
@@ -145,13 +136,10 @@ export class PwaService implements OnDestroy {
     if (this.standaloneMediaQueryList) {
       this.standaloneMediaQueryList.removeEventListener('change', this.onDisplayModeChange);
     }
-    if (this.autoShowTimer) {
-      clearTimeout(this.autoShowTimer);
-    }
   }
 
   private readonly onBeforeInstallPrompt = (event: Event): void => {
-    // Prevent the default mini-infobar or browser prompt
+    // Prevent default browser infobar
     event.preventDefault();
     this.deferredPrompt = event as BeforeInstallPromptEvent;
     this.canPromptNative.set(true);
@@ -164,50 +152,22 @@ export class PwaService implements OnDestroy {
     this.canPromptNative.set(false);
     this.deferredPrompt = null;
     this.showBanner.set(false);
-    this.showGuideModal.set(false);
   };
 
-  // ── Prompt Scheduling & Snooze ──────────────────────────────
-  private checkInitialPrompt(): void {
-    // For iOS or other platforms where beforeinstallprompt doesn't fire,
-    // evaluate visibility after a short delay so page loads smoothly.
-    this.autoShowTimer = setTimeout(() => {
-      this.evaluateBannerVisibility();
-    }, 2500);
-  }
-
+  // ── Prompt Visibility Evaluation ────────────────────────────
   private evaluateBannerVisibility(): void {
     if (this.isStandalone()) {
       this.showBanner.set(false);
       return;
     }
 
-    if (this.isDismissedRecently()) {
-      this.showBanner.set(false);
-      return;
-    }
-
-    // Display banner on mobile browsers if not standalone
-    if (this.isMobile() || this.canPromptNative()) {
-      this.showBanner.set(true);
-    }
-  }
-
-  private isDismissedRecently(): boolean {
-    if (!this.isBrowser) return false;
-    const dismissedAt = localStorage.getItem(this.STORAGE_KEY);
-    if (!dismissedAt) return false;
-
-    const timestamp = parseInt(dismissedAt, 10);
-    if (isNaN(timestamp)) return false;
-
-    const elapsedDays = (Date.now() - timestamp) / (1000 * 60 * 60 * 24);
-    return elapsedDays < this.SNOOZE_DAYS;
+    // Always show popup alert immediately when opening the site in a browser
+    this.showBanner.set(true);
   }
 
   // ── Public User Actions ─────────────────────────────────────
   async promptInstall(): Promise<void> {
-    // If native prompt is available (Android / Chromium)
+    // If native prompt is available (Android Chrome / Chromium)
     if (this.deferredPrompt) {
       try {
         await this.deferredPrompt.prompt();
@@ -218,28 +178,12 @@ export class PwaService implements OnDestroy {
           this.deferredPrompt = null;
         }
       } catch (err) {
-        console.warn('[PWA] Error triggering native prompt:', err);
+        console.warn('[PWA] Native prompt error:', err);
       }
-      return;
-    }
-
-    // If on iOS or browsers without native prompt support, show visual step-by-step guide
-    this.showBanner.set(false);
-    this.showGuideModal.set(true);
-  }
-
-  dismissBanner(snoozeDays = this.SNOOZE_DAYS): void {
-    this.showBanner.set(false);
-    if (this.isBrowser) {
-      localStorage.setItem(this.STORAGE_KEY, Date.now().toString());
     }
   }
 
-  openGuideModal(): void {
-    this.showGuideModal.set(true);
-  }
-
-  closeGuideModal(): void {
-    this.showGuideModal.set(false);
+  dismissBanner(): void {
+    this.showBanner.set(false);
   }
 }

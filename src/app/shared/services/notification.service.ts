@@ -1,87 +1,19 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap, catchError, of, map } from 'rxjs';
 import { AppNotification } from '../models/notification';
-
-const INITIAL_NOTIFICATIONS: readonly AppNotification[] = [
-  // Client Notifications
-  {
-    id: 'n-client-1',
-    title: "C'est bientôt votre tour !",
-    message: 'Votre ticket #6 chez King Barber approche. Merci de vous présenter au salon.',
-    type: 'ticket',
-    recipientRole: 'client',
-    createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-    isRead: false,
-    targetRoute: '/client/tickets/t-1'
-  },
-  {
-    id: 'n-client-2',
-    title: 'Commande en cours de livraison',
-    message: 'Votre commande CMD-2026-012 a été expédiée et sera livrée sous peu.',
-    type: 'order',
-    recipientRole: 'client',
-    createdAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    isRead: false,
-    targetRoute: '/client/boutique/commandes/ord-101'
-  },
-  {
-    id: 'n-client-3',
-    title: 'Offre spéciale Kérastase !',
-    message: 'Profitez d\'une réduction exclusive sur les produits Kérastase dans la boutique Fotolou.',
-    type: 'promo',
-    recipientRole: 'client',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    isRead: true,
-    targetRoute: '/client/boutique/produits/p-elixir'
-  },
-
-  // Coiffeur Notifications (Strictly /coiffeur/... routes)
-  {
-    id: 'n-coiffeur-1',
-    title: 'Nouveau client dans la file !',
-    message: 'Amadou Koulibaly vient de prendre le ticket #01 dans votre salon.',
-    type: 'ticket',
-    recipientRole: 'coiffeur',
-    createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    isRead: false,
-    targetRoute: '/coiffeur/tickets'
-  },
-  {
-    id: 'n-coiffeur-2',
-    title: 'Ticket Annulé',
-    message: 'Le client Saliou a annulé son passage pour aujourd\'hui.',
-    type: 'ticket',
-    recipientRole: 'coiffeur',
-    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    isRead: false,
-    targetRoute: '/coiffeur/tickets'
-  },
-  {
-    id: 'n-coiffeur-3',
-    title: 'Matériel livré 📦',
-    message: 'Votre commande de tondeuse Wahl Magic Clip est bien arrivée au salon.',
-    type: 'order',
-    recipientRole: 'coiffeur',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    isRead: true,
-    targetRoute: '/coiffeur/home'
-  },
-  {
-    id: 'n-coiffeur-4',
-    title: 'Bilan de la journée',
-    message: 'Félicitations ! Vous avez servi 25 clients aujourd\'hui (+18% par rapport à hier).',
-    type: 'system',
-    recipientRole: 'coiffeur',
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    isRead: true,
-    targetRoute: '/coiffeur/home'
-  }
-];
+import { API_CONFIG } from '../../core/config/api.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  readonly notifications = signal<readonly AppNotification[]>(INITIAL_NOTIFICATIONS);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = API_CONFIG.baseUrl;
+
+  readonly notifications = signal<readonly AppNotification[]>([]);
+  readonly loading = signal<boolean>(false);
+  readonly error = signal<string | null>(null);
 
   readonly clientNotifications = computed(() =>
     this.notifications().filter((n) => n.recipientRole === 'client')
@@ -99,12 +31,42 @@ export class NotificationService {
     this.coiffeurNotifications().filter((n) => !n.isRead).length
   );
 
-  // Backward compatibility alias for client unread count
   readonly unreadCount = computed(() => this.clientUnreadCount());
 
-  markAsRead(id: string): void {
+  constructor() {
+    this.loadNotifications();
+  }
+
+  loadNotifications(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http.get<AppNotification[]>(`${this.baseUrl}${API_CONFIG.endpoints.notifications}`).pipe(
+      tap((data) => {
+        this.notifications.set(data);
+        this.loading.set(false);
+      }),
+      catchError((err) => {
+        console.error('[NotificationService] Error loading notifications:', err);
+        this.error.set('Impossible de charger les notifications.');
+        this.loading.set(false);
+        return of([]);
+      })
+    ).subscribe();
+  }
+
+  markAsRead(id: string): Observable<AppNotification | null> {
     this.notifications.update((list) =>
       list.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+    );
+
+    return this.http.patch<AppNotification>(`${this.baseUrl}${API_CONFIG.endpoints.notifications}/${id}`, {
+      isRead: true
+    }).pipe(
+      catchError((err) => {
+        console.warn(`[NotificationService] API patch failed for ${id}:`, err);
+        return of(null);
+      })
     );
   }
 
@@ -118,7 +80,15 @@ export class NotificationService {
     this.markAllAsRead(role);
   }
 
-  deleteNotification(id: string): void {
+  deleteNotification(id: string): Observable<boolean> {
     this.notifications.update((list) => list.filter((n) => n.id !== id));
+
+    return this.http.delete(`${this.baseUrl}${API_CONFIG.endpoints.notifications}/${id}`).pipe(
+      map(() => true),
+      catchError((err) => {
+        console.warn(`[NotificationService] API delete failed for ${id}:`, err);
+        return of(true);
+      })
+    );
   }
 }

@@ -25,7 +25,7 @@ interface FaqItem {
         [backRoute]="backRoute"
       />
 
-      <!-- Scrollable Main Content -->
+      <!-- Main Content -->
       <div class="support-page__content">
         <!-- Hero Contact Buttons -->
         <section class="support-contact-hero">
@@ -33,7 +33,7 @@ interface FaqItem {
           <p>Notre équipe support est disponible pour répondre à toutes vos questions.</p>
 
           <div class="support-contact-btns">
-            <a [href]="whatsappUrl" target="_blank" class="support-btn support-btn--wa">
+            <a [href]="whatsappUrl" target="_blank" rel="noopener" class="support-btn support-btn--wa">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm5.82 14.1c-.25.7-1.46 1.34-2.02 1.4-.53.07-1.22.1-1.96-.14-.45-.15-1.03-.34-1.78-.67-3.14-1.36-5.18-4.54-5.34-4.75-.16-.21-1.29-1.72-1.29-3.28 0-1.56.82-2.33 1.11-2.65.29-.32.64-.4.85-.4.21 0 .42.01.6.01.2 0 .46-.07.72.55.26.63.89 2.17.97 2.32.08.16.13.35.03.56-.1.21-.16.34-.31.52-.16.18-.33.4-.47.54-.15.15-.31.31-.13.62.18.3.8 1.32 1.72 2.14 1.18 1.05 2.18 1.38 2.49 1.54.31.16.49.13.67-.08.18-.21.77-.9 1-.1.21.23.21.37.05.78.7.16.41.32.82.32 1.23 0 .41-.25.82-1.02.82z"/>
               </svg>
@@ -75,14 +75,14 @@ interface FaqItem {
 
           @if (messageSent()) {
             <div class="support-feedback__success">
-              <p>✅ Votre message a été envoyé avec succès. Merci !</p>
+              <p>✅ Votre message a été envoyé avec succès. Notre équipe vous répondra rapidement.</p>
             </div>
           } @else {
             <form class="support-feedback__form" (submit)="sendMessage($event)">
               <textarea
                 #messageInput
                 rows="4"
-                placeholder="Décrivez votre problème ou posez votre question ici..."
+                placeholder="Décrivez votre question ou remarque ici..."
                 required
               ></textarea>
               <button type="submit" class="support-feedback__submit-btn">
@@ -105,25 +105,25 @@ export class HelpSupportPage {
     {
       id: 'faq-1',
       question: 'Comment prendre un ticket en ligne ?',
-      answer: 'Choisissez le salon de votre choix depuis l\'accueil, sélectionnez la formule ou la personne (pour vous ou un proche) et validez la prise de ticket.',
+      answer: 'Choisissez le salon de votre choix depuis l\'accueil, sélectionnez le bénéficiaire du ticket (pour vous ou un proche) et validez la prise de ticket en 1 clic.',
       isOpen: true
     },
     {
       id: 'faq-2',
       question: 'Comment suivre une commande boutique ?',
-      answer: 'Accédez à l\'onglet Profil -> Mes Commandes pour consulter l\'historique et échanger sur WhatsApp pour le suivi en temps réel.',
+      answer: 'Accédez à l\'onglet Profil -> Mes Commandes pour consulter vos commandes en cours et échanger avec notre équipe sur WhatsApp.',
       isOpen: false
     },
     {
       id: 'faq-3',
       question: 'Comment ajouter ou modifier un proche ?',
-      answer: 'Dans l\'onglet Profil, cliquez sur "Mes Proches" pour ajouter les membres de votre famille ou modifier leurs informations.',
+      answer: 'Dans l\'onglet Profil, cliquez sur "Mes Proches" pour ajouter ou modifier les membres de votre famille.',
       isOpen: false
     },
     {
       id: 'faq-4',
       question: 'Comment fonctionne le mode Coiffeur Salon ?',
-      answer: 'Les coiffeurs professionnels gèrent leur file d\'attente en direct avec les boutons "Sauter", "Servi" et l\'ajout rapide de clients venus sur place.',
+      answer: 'Les professionnels connectés gèrent leur file d\'attente en direct avec les boutons "Sauter", "Marquer Servi" et l\'ajout de clients venus sur place.',
       isOpen: false
     }
   ]);

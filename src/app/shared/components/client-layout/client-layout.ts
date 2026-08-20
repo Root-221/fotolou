@@ -8,20 +8,25 @@ import { BottomNavigation, BottomNavItem, UserRole } from '../bottom-navigation/
     <div
       class="client-layout"
       [class.client-layout--bleed-header]="bleedHeader"
+      [class.client-layout--with-bottom-nav]="showBottomNav"
     >
-      <!-- Fixed Header Slot -->
+      <!-- Fixed/Sticky Header Slot -->
       @if (hasHeaderSlot) {
         <header class="client-layout__header">
-          <ng-content select="[slot=header], [header]" />
+          <div class="client-layout__header-inner">
+            <ng-content select="[slot=header], [header]" />
+          </div>
         </header>
       }
 
-      <!-- Scrollable Main Content -->
+      <!-- Main Body Container -->
       <main class="client-layout__body">
-        <ng-content />
+        <div class="client-layout__main-content">
+          <ng-content />
+        </div>
       </main>
 
-      <!-- Fixed Footer Slot (Bottom Nav or Custom Action Button) -->
+      <!-- Bottom Navigation or Fixed Action Footer -->
       @if (showBottomNav || hasCustomFooter) {
         <footer class="client-layout__footer">
           <ng-content select="[slot=footer], [footer]" />

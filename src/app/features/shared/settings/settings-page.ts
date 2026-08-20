@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
-import { ThemeService, AppTheme } from '../../../shared/services/theme.service';
+import { ThemeService } from '../../../shared/services/theme.service';
 import { PwaService } from '../../../shared/services/pwa.service';
 import { AuthSessionService } from '../../auth/auth-session.service';
 
@@ -21,7 +21,7 @@ import { AuthSessionService } from '../../auth/auth-session.service';
         [backRoute]="backRoute"
       />
 
-      <!-- Scrollable Main Content -->
+      <!-- Content -->
       <div class="settings-page__content">
         <!-- Appearance Section -->
         <section class="settings-section">
@@ -146,12 +146,12 @@ import { AuthSessionService } from '../../auth/auth-session.service';
         <!-- Photos du Salon (coiffeur only) -->
         @if (auth.activeRole() === 'coiffeur') {
           <section class="settings-section">
-            <h2 class="settings-section__title">Photos & Visuels du Salon</h2>
+            <h2 class="settings-section__title">Photos &amp; Visuels du Salon</h2>
 
             <div class="settings-card">
               <button type="button" class="settings-row settings-row--link" (click)="goToPhotos()">
                 <div class="settings-row__info">
-                  <strong>Photo de profil & bannière salon</strong>
+                  <strong>Photo de profil &amp; bannière salon</strong>
                   <span>Mettre à jour vos photos de présentation.</span>
                 </div>
                 <svg class="settings-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -198,7 +198,7 @@ export class SettingsPage {
   }
 
   protected openInstall(): void {
+    this.pwa.showBanner.set(true);
     this.pwa.promptInstall();
   }
 }
-

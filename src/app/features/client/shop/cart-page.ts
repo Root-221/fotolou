@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { GeoLocationModal } from '../../../shared/components/geolocation-modal/geolocation-modal';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { CartService } from '../../../shared/services/cart.service';
 
 @Component({
@@ -11,7 +12,7 @@ import { CartService } from '../../../shared/services/cart.service';
     ClientLayout,
     PageHeader,
     GeoLocationModal,
-    RouterLink
+    EmptyStateComponent
   ],
   template: `
     <app-client-layout [showBottomNav]="false" [hasCustomFooter]="true">
@@ -31,7 +32,7 @@ import { CartService } from '../../../shared/services/cart.service';
         }
       </div>
 
-      <!-- Scrollable Main Content -->
+      <!-- Main Content -->
       <div class="cart-page__content">
         @if (cartService.cartItems().length > 0) {
           <!-- Cart Items List -->
@@ -80,17 +81,13 @@ import { CartService } from '../../../shared/services/cart.service';
             }
           </div>
         } @else {
-          <div class="cart-page__empty-state">
-            <div class="cart-page__empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"/>
-                <circle cx="20" cy="21" r="1"/>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-              </svg>
-            </div>
-            <p>Votre panier est vide pour le moment.</p>
-            <a routerLink="/client/boutique" class="cart-page__shop-link">Découvrir la boutique</a>
-          </div>
+          <app-empty-state
+            icon="cart"
+            title="Votre panier est vide"
+            description="Explorez notre boutique pour commander vos produits de coiffure professionnels."
+            actionLabel="Découvrir la boutique"
+            actionRoute="/client/boutique"
+          />
         }
       </div>
 
@@ -109,10 +106,12 @@ import { CartService } from '../../../shared/services/cart.service';
               <strong>{{ formatPrice(cartService.deliveryFee()) }} FCFA</strong>
             </div>
 
-            <div class="cart-summary__row">
-              <span>Réduction</span>
-              <strong class="cart-summary__discount">- {{ formatPrice(cartService.discount()) }} FCFA</strong>
-            </div>
+            @if (cartService.discount() > 0) {
+              <div class="cart-summary__row">
+                <span>Réduction</span>
+                <strong class="cart-summary__discount">- {{ formatPrice(cartService.discount()) }} FCFA</strong>
+              </div>
+            }
 
             <div class="cart-summary__divider"></div>
 
@@ -124,13 +123,13 @@ import { CartService } from '../../../shared/services/cart.service';
 
           <!-- Checkout Continue Button -->
           <button type="button" class="cart-page__continue-btn" (click)="openGeoModal()">
-            Continuer
+            Continuer la commande
           </button>
         </div>
       }
     </app-client-layout>
 
-    <!-- Geolocation Permission Modal (Screenshot 4) -->
+    <!-- Geolocation Permission Modal -->
     <app-geolocation-modal
       [isOpen]="showGeoModal()"
       (authorize)="proceedToConfirmation()"

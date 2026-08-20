@@ -1,27 +1,13 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect } from '@angular/core';
 import { Product, CartItem } from '../models/product';
-import { PRODUCTS_MOCK } from '../data/products.mock';
-
-const INITIAL_CART_ITEMS: CartItem[] = [
-  {
-    product: PRODUCTS_MOCK.find(p => p.id === 'p-magic-clip') ?? PRODUCTS_MOCK[3],
-    quantity: 1
-  },
-  {
-    product: PRODUCTS_MOCK.find(p => p.id === 'p-huile-tondeuse') ?? PRODUCTS_MOCK[4],
-    quantity: 1
-  },
-  {
-    product: PRODUCTS_MOCK.find(p => p.id === 'p-blade-ice') ?? PRODUCTS_MOCK[5],
-    quantity: 1
-  }
-];
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  readonly cartItems = signal<readonly CartItem[]>(INITIAL_CART_ITEMS);
+  private readonly STORAGE_KEY = 'fotolou_cart_items';
+
+  readonly cartItems = signal<readonly CartItem[]>(this.readInitialCart());
   readonly deliveryFee = signal(2000);
   readonly discount = signal(0);
 
@@ -36,6 +22,17 @@ export class CartService {
   readonly totalPrice = computed(() => {
     return Math.max(0, this.subtotal() + this.deliveryFee() - this.discount());
   });
+
+  constructor() {
+    effect(() => {
+      const items = this.cartItems();
+      try {
+        globalThis.localStorage?.setItem(this.STORAGE_KEY, JSON.stringify(items));
+      } catch (err) {
+        console.warn('[CartService] Error saving cart to localStorage:', err);
+      }
+    });
+  }
 
   addToCart(product: Product, quantity = 1): void {
     this.cartItems.update((items) => {
@@ -72,5 +69,17 @@ export class CartService {
 
   clearCart(): void {
     this.cartItems.set([]);
+  }
+
+  private readInitialCart(): CartItem[] {
+    try {
+      const saved = globalThis.localStorage?.getItem(this.STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // ignore
+    }
+    return [];
   }
 }

@@ -1,40 +1,84 @@
+// ── Fotolou Global Tokens & Design System ──────────────────────────────
 :root {
   color-scheme: light;
   --font-family: 'Plus Jakarta Sans', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --primary: #2563eb;
+  
+  // Brand Colors
+  --primary: #1E5AF0;
+  --primary-hover: #1a4fd6;
   --secondary: #3b82f6;
-  --action: #ffc107;
+  --accent: #C1621B;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  // Surfaces & Backgrounds
+  --bg-page: #f8fafc;
   --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
+  --bg-secondary: #f1f5f9;
   --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-header: #ffffff;
+  
+  // Text Colors
   --text-primary: #0f172a;
   --text-secondary: #64748b;
-  --border-color: #f1f5f9;
-  --shadow: 0 20px 45px rgba(17, 24, 39, 0.08);
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+
+  // Borders & Dividers
+  --border-color: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --divider: #e2e8f0;
+
+  // Shadows
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.08);
+
+  // Border Radius
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
 
   font-family: var(--font-family);
-  background: var(--bg-primary);
+  background: var(--bg-page);
   color: var(--text-primary);
 }
 
 // ── Ultra High Contrast Dark Theme ────────────────────────
 body.dark-theme {
   color-scheme: dark;
+  
+  --bg-page: #0b132b;
   --bg-primary: #0b132b;
   --bg-secondary: #1c2541;
   --bg-card: #1c2541;
+  --bg-card-hover: #242f54;
+  --bg-header: #1c2541;
+
   --text-primary: #ffffff;
   --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
   --border-color: #334155;
+  --border-subtle: #1e293b;
+  --divider: #334155;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.5);
 
   background-color: #0b132b !important;
   color: #ffffff !important;
 
+  // Global dark mode text & surfaces
   p, span, label, input, textarea, select, strong, b, h1, h2, h3, h4, h5, h6, div, button, a, li {
-    color: #ffffff;
+    color: inherit;
   }
 
-  // Header Back Button & Header Notification Bell (Pure White)
+  // Header Back Button & Header Notification Bell
   .page-header__back-btn,
   .location-header__notification-btn,
   .location-header__selector,
@@ -90,7 +134,7 @@ body.dark-theme {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
   }
 
-  // Hover states in dark mode (stay dark blue, never white)
+  // Hover states in dark mode
   .profile-page__menu-item:hover,
   .notification-card:hover,
   .faq-card__header:hover,
@@ -100,7 +144,7 @@ body.dark-theme {
     background-color: #2a365c !important;
   }
 
-  // Titles & Headings
+  // Headings
   h1, h2, h3, h4, h5, h6, strong, b,
   .page-header__title,
   .location-header__text,
@@ -225,6 +269,7 @@ body.dark-theme {
   }
 }
 
+// ── Reset & Core Styles ──────────────────────────────────────
 * {
   box-sizing: border-box;
 }

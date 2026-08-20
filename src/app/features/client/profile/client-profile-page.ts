@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
@@ -7,6 +7,7 @@ import { StatCard } from '../../../shared/components/stat-card/stat-card';
 import { ConfirmModal } from '../../../shared/components/confirm-modal/confirm-modal';
 import { TicketService } from '../../../shared/services/ticket.service';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { AuthSessionService } from '../../auth/auth-session.service';
 
 @Component({
   selector: 'app-client-profile-page',
@@ -22,7 +23,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
         (notificationClick)="goToNotifications()"
       />
 
-      <!-- Scrollable Body -->
+      <!-- Body -->
       <div class="profile-page">
 
         <!-- Avatar & Identity -->
@@ -200,18 +201,27 @@ import { NotificationService } from '../../../shared/services/notification.servi
   `,
   styleUrl: './client-profile-page.scss'
 })
-export class ClientProfilePage {
+export class ClientProfilePage implements OnInit {
   private readonly router = inject(Router);
   private readonly ticketService = inject(TicketService);
   protected readonly notificationService = inject(NotificationService);
+  private readonly auth = inject(AuthSessionService);
 
   protected readonly showLogoutModal = signal(false);
-  protected readonly displayName = signal('Client');
-  protected readonly phone = '+221 77 862 70 52';
+  protected readonly displayName = signal('Awa Diop');
+  protected phone = '+221 70 123 45 67';
 
   // ── Inline Name Edit ─────────────────────────────────────
   protected readonly editingName = signal(false);
   protected nameBuffer = '';
+
+  ngOnInit(): void {
+    const user = this.auth.activeUser();
+    if (user) {
+      this.displayName.set(user.name);
+      this.phone = user.phone;
+    }
+  }
 
   protected startEdit(): void {
     this.nameBuffer = this.displayName();
@@ -221,7 +231,7 @@ export class ClientProfilePage {
   protected saveName(): void {
     const trimmed = this.nameBuffer.trim();
     if (trimmed.length > 0) {
-      this.displayName.set(trimmed.toUpperCase());
+      this.displayName.set(trimmed);
     }
     this.editingName.set(false);
   }

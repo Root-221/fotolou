@@ -178,13 +178,14 @@ export class EditRelativePage implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    const found = this.relativeService.relatives().find((r) => r.id === id) ?? null;
-    this.relative.set(found);
-    if (found) {
-      this.name = found.name;
-      this.relation = found.relation;
-      this.phone = found.phone ?? '';
-    }
+    this.relativeService.getRelativeById(id).subscribe((found) => {
+      this.relative.set(found);
+      if (found) {
+        this.name = found.name;
+        this.relation = found.relation;
+        this.phone = found.phone ?? '';
+      }
+    });
   }
 
   protected saveChanges(): void {
@@ -195,16 +196,18 @@ export class EditRelativePage implements OnInit {
       this.name,
       this.relation as RelativeRelation,
       this.phone || undefined
-    );
-    this.router.navigate(['/client/proches']);
+    ).subscribe(() => {
+      this.router.navigate(['/client/proches']);
+    });
   }
 
   protected confirmDelete(): void {
     const rel = this.relative();
     this.showDeleteModal.set(false);
     if (!rel) return;
-    this.relativeService.removeRelative(rel.id);
-    this.router.navigate(['/client/proches']);
+    this.relativeService.removeRelative(rel.id).subscribe(() => {
+      this.router.navigate(['/client/proches']);
+    });
   }
 
   protected cancel(): void {

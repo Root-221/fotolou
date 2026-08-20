@@ -2,6 +2,9 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { AppNotification } from '../../../shared/models/notification';
 
@@ -9,7 +12,10 @@ import { AppNotification } from '../../../shared/models/notification';
   selector: 'app-notifications-page',
   imports: [
     ClientLayout,
-    PageHeader
+    PageHeader,
+    SkeletonLoaderComponent,
+    EmptyStateComponent,
+    ErrorStateComponent
   ],
   template: `
     <app-client-layout [showBottomNav]="false" [hasCustomFooter]="false">
@@ -28,9 +34,18 @@ import { AppNotification } from '../../../shared/models/notification';
         }
       </div>
 
-      <!-- Scrollable Main Content -->
+      <!-- Main Content -->
       <div class="notifications-page__content">
-        @if (notificationService.clientNotifications().length > 0) {
+        @if (notificationService.loading()) {
+          <div class="notifications-page__list">
+            <app-skeleton-loader type="list" [count]="4" />
+          </div>
+        } @else if (notificationService.error()) {
+          <app-error-state
+            [message]="notificationService.error()!"
+            (retry)="notificationService.loadNotifications()"
+          />
+        } @else if (notificationService.clientNotifications().length > 0) {
           <div class="notifications-page__list">
             @for (notification of notificationService.clientNotifications(); track notification.id) {
               <div
@@ -104,16 +119,11 @@ import { AppNotification } from '../../../shared/models/notification';
             }
           </div>
         } @else {
-          <div class="notifications-page__empty">
-            <div class="notifications-page__empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-            </div>
-            <h3>Aucune notification</h3>
-            <p>Vous êtes à jour ! Vos prochaines notifications apparaîtront ici.</p>
-          </div>
+          <app-empty-state
+            icon="notification"
+            title="Aucune notification"
+            description="Vous êtes à jour ! Vos prochaines notifications de tickets et commandes apparaîtront ici."
+          />
         }
       </div>
     </app-client-layout>
@@ -125,7 +135,7 @@ export class NotificationsPage {
   protected readonly notificationService = inject(NotificationService);
 
   protected onNotificationClick(notification: AppNotification): void {
-    this.notificationService.markAsRead(notification.id);
+    this.notificationService.markAsRead(notification.id).subscribe();
     if (notification.targetRoute) {
       this.router.navigate([notification.targetRoute]);
     }
@@ -133,7 +143,7 @@ export class NotificationsPage {
 
   protected onDelete(event: Event, id: string): void {
     event.stopPropagation();
-    this.notificationService.deleteNotification(id);
+    this.notificationService.deleteNotification(id).subscribe();
   }
 
   protected formatTime(isoStr: string): string {
