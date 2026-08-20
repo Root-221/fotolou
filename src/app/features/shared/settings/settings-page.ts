@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { PageHeader } from '../../../shared/components/page-header/page-header';
 import { ThemeService, AppTheme } from '../../../shared/services/theme.service';
+import { PwaService } from '../../../shared/services/pwa.service';
 import { AuthSessionService } from '../../auth/auth-session.service';
 
 @Component({
@@ -57,6 +58,34 @@ import { AuthSessionService } from '../../auth/auth-session.service';
               <span class="settings-theme-btn__icon">⚙️</span>
               <span>Système</span>
             </button>
+          </div>
+        </section>
+
+        <!-- Application Mobile (PWA) Section -->
+        <section class="settings-section">
+          <h2 class="settings-section__title">Application Mobile</h2>
+          <p class="settings-section__subtitle">Accédez à Fotolou directement depuis votre écran d'accueil.</p>
+
+          <div class="settings-card">
+            @if (pwa.isStandalone()) {
+              <div class="settings-row">
+                <div class="settings-row__info">
+                  <strong>Mode Application</strong>
+                  <span>Vous utilisez Fotolou en mode autonome sur votre téléphone.</span>
+                </div>
+                <span class="settings-badge settings-badge--success">✓ Installée</span>
+              </div>
+            } @else {
+              <button type="button" class="settings-row settings-row--link" (click)="openInstall()">
+                <div class="settings-row__info">
+                  <strong>📱 Installer sur l'écran d'accueil</strong>
+                  <span>Accès rapide, plein écran et fluidité maximale.</span>
+                </div>
+                <svg class="settings-row__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </button>
+            }
           </div>
         </section>
 
@@ -155,6 +184,7 @@ export class SettingsPage {
   private readonly router = inject(Router);
   protected readonly auth = inject(AuthSessionService);
   protected readonly themeService = inject(ThemeService);
+  protected readonly pwa = inject(PwaService);
 
   protected readonly ticketAlerts = signal(true);
   protected readonly promoAlerts = signal(true);
@@ -166,4 +196,9 @@ export class SettingsPage {
   protected goToPhotos(): void {
     this.router.navigate(['/coiffeur/settings/photos']);
   }
+
+  protected openInstall(): void {
+    this.pwa.promptInstall();
+  }
 }
+
