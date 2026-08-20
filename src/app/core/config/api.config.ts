@@ -1,10 +1,11 @@
+import { environment } from '../../../environments/environment';
+
 /**
  * Centralized API configuration for Fotolou.
- * Allows effortless switching between JSON Server (mock backend)
- * and the production Spring Boot API backend.
+ * Dynamically switches between local JSON Server and Render / Spring Boot production backend.
  */
 export const API_CONFIG = {
-  baseUrl: 'http://localhost:3000',
+  baseUrl: environment.apiUrl,
   endpoints: {
     salons: '/salons',
     tickets: '/tickets',
