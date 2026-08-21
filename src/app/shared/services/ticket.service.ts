@@ -1,6 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, catchError, of, map } from 'rxjs';
+import { Observable, tap, catchError, of, map, forkJoin } from 'rxjs';
 import { Ticket, TicketTab } from '../models/ticket';
 import { API_CONFIG } from '../../core/config/api.config';
 
@@ -91,6 +91,35 @@ export class TicketService {
         return of(newTicket);
       })
     );
+  }
+
+  createMultipleTickets(salonId: string, salonName: string, ownerNames: string[]): Observable<Ticket[]> {
+    if (!ownerNames || ownerNames.length === 0) return of([]);
+
+    let activeCount = this.tickets().filter((t) => t.category === 'active').length;
+    const now = Date.now();
+    const newTickets: Ticket[] = ownerNames.map((name, index) => ({
+      id: `t-${now}-${index}`,
+      salonId,
+      salonName,
+      ownerName: name,
+      ticketNumber: activeCount + index + 1,
+      status: 'your_turn',
+      category: 'active',
+      createdAt: new Date(now + index * 1000).toISOString()
+    }));
+
+    // Optimistic UI update
+    this.tickets.update((prev) => [...newTickets, ...prev]);
+    this.activeTab.set('active');
+
+    const requests = newTickets.map((ticket) =>
+      this.http.post<Ticket>(`${this.baseUrl}${API_CONFIG.endpoints.tickets}`, ticket).pipe(
+        catchError(() => of(ticket))
+      )
+    );
+
+    return forkJoin(requests);
   }
 
   cancelTicket(id: string): Observable<Ticket | null> {
