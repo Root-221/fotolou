@@ -17,6 +17,7 @@ import { OrderConfirmationPage } from './features/client/shop/order-confirmation
 import { MyOrdersPage } from './features/client/shop/my-orders-page';
 import { OrderDetailPage } from './features/client/shop/order-detail-page';
 import { NotificationsPage } from './features/client/notifications/notifications-page';
+import { FavoritesPage } from './features/client/favorites/favorites-page';
 import { CoiffeurHomePage } from './features/coiffeur/home/coiffeur-home-page';
 import { CoiffeurTicketsPage } from './features/coiffeur/tickets/coiffeur-tickets-page';
 import { CoiffeurNotificationsPage } from './features/coiffeur/notifications/coiffeur-notifications-page';
@@ -25,13 +26,31 @@ import { CoiffeurPhotosPage } from './features/coiffeur/photos/coiffeur-photos-p
 import { SettingsPage } from './features/shared/settings/settings-page';
 import { HelpSupportPage } from './features/shared/support/help-support-page';
 import { OnboardingPage } from './features/onboarding/onboarding-page';
+import { VitrinePage } from './features/vitrine/vitrine-page';
 import { NotFoundPage } from './features/shared/not-found/not-found-page';
 
+// ── Admin Components & Guard ────────────────────────────────
+import { AdminLoginPage } from './features/admin/pages/login/admin-login-page';
+import { AdminLayoutComponent } from './features/admin/layout/admin-layout';
+import { AdminDashboardPage } from './features/admin/pages/dashboard/admin-dashboard-page';
+import { AdminSalonsPage } from './features/admin/pages/salons/admin-salons-page';
+import { AdminCoiffeursPage } from './features/admin/pages/coiffeurs/admin-coiffeurs-page';
+import { AdminTicketsPage } from './features/admin/pages/tickets/admin-tickets-page';
+import { AdminBoutiquePage } from './features/admin/pages/boutique/admin-boutique-page';
+import { AdminCommandesPage } from './features/admin/pages/commandes/admin-commandes-page';
+import { AdminUsersPage } from './features/admin/pages/users/admin-users-page';
+import { AdminCategoriesPage } from './features/admin/pages/categories/admin-categories-page';
+import { AdminSettingsPage } from './features/admin/pages/settings/admin-settings-page';
+import { adminAuthGuard } from './features/admin/services/admin-auth.service';
+
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'onboarding' },
+  { path: '', component: VitrinePage },
+  { path: 'vitrine', component: VitrinePage },
   { path: 'onboarding', component: OnboardingPage },
   { path: 'auth/login', component: LoginPage },
   { path: 'auth/code', component: OtpPage },
+
+  // ── Client Routes ─────────────────────────────────────────
   { path: 'client/home', component: ClientHomePage },
   { path: 'client/salons/:id', component: SalonDetailPage },
   { path: 'client/salons/:id/ticket', component: TicketOwnerPage },
@@ -48,8 +67,13 @@ export const routes: Routes = [
   { path: 'client/boutique/commandes', component: MyOrdersPage },
   { path: 'client/boutique/commandes/:id', component: OrderDetailPage },
   { path: 'client/notifications', component: NotificationsPage },
+  { path: 'client/favorites', component: FavoritesPage },
+  { path: 'client/favoris', component: FavoritesPage },
+  { path: 'client/mes-favoris', component: FavoritesPage },
   { path: 'client/settings', component: SettingsPage },
   { path: 'client/support', component: HelpSupportPage },
+
+  // ── Coiffeur Routes ───────────────────────────────────────
   { path: 'coiffeur/home', component: CoiffeurHomePage },
   { path: 'coiffeur/tickets', component: CoiffeurTicketsPage },
   { path: 'coiffeur/notifications', component: CoiffeurNotificationsPage },
@@ -57,6 +81,27 @@ export const routes: Routes = [
   { path: 'coiffeur/settings', component: SettingsPage },
   { path: 'coiffeur/settings/photos', component: CoiffeurPhotosPage },
   { path: 'coiffeur/support', component: HelpSupportPage },
+
+  // ── Admin Web Routes (/admin) ─────────────────────────────
+  { path: 'admin/login', component: AdminLoginPage },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminAuthGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      { path: 'dashboard', component: AdminDashboardPage },
+      { path: 'salons', component: AdminSalonsPage },
+      { path: 'coiffeurs', component: AdminCoiffeursPage },
+      { path: 'tickets', component: AdminTicketsPage },
+      { path: 'boutique', component: AdminBoutiquePage },
+      { path: 'categories', component: AdminCategoriesPage },
+      { path: 'commandes', component: AdminCommandesPage },
+      { path: 'utilisateurs', component: AdminUsersPage },
+      { path: 'settings', component: AdminSettingsPage }
+    ]
+  },
+
   { path: 'home', pathMatch: 'full', redirectTo: 'auth/login' },
   { path: '404', component: NotFoundPage },
   { path: '**', component: NotFoundPage }

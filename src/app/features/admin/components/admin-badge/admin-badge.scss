@@ -1,0 +1,57 @@
+:host {
+  display: inline-block;
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: capitalize;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  &--success {
+    background: #dcfce7;
+    color: #15803d;
+    .admin-badge__dot { background: #16a34a; }
+  }
+
+  &--warning {
+    background: #fef3c7;
+    color: #b45309;
+    .admin-badge__dot { background: #f59e0b; }
+  }
+
+  &--danger {
+    background: #fee2e2;
+    color: #b91c1c;
+    .admin-badge__dot { background: #ef4444; }
+  }
+
+  &--info {
+    background: #e0f2fe;
+    color: #0369a1;
+    .admin-badge__dot { background: #0ea5e9; }
+  }
+
+  &--primary {
+    background: #eef2ff;
+    color: #1E5AF0;
+    .admin-badge__dot { background: #1E5AF0; }
+  }
+
+  &--neutral {
+    background: #f1f5f9;
+    color: #475569;
+    .admin-badge__dot { background: #94a3b8; }
+  }
+}

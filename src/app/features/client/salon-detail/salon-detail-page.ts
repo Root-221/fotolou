@@ -11,6 +11,8 @@ import { ErrorStateComponent } from '../../../shared/components/error-state/erro
 import { SalonService } from '../../../shared/services/salon.service';
 import { Salon } from '../../../shared/models/salon';
 
+import { FavoritesService } from '../../../shared/services/favorites.service';
+
 @Component({
   selector: 'app-salon-detail-page',
   imports: [
@@ -55,10 +57,25 @@ import { Salon } from '../../../shared/models/salon';
           />
 
           <div class="salon-detail__content">
-            <!-- Title & Subtitle -->
+            <!-- Title & Subtitle + Favorite Toggle -->
             <section class="salon-detail__header">
-              <h1>{{ salon.name }}</h1>
-              <p>{{ salon.location }}</p>
+              <div class="salon-detail__header-title-row">
+                <div>
+                  <h1>{{ salon.name }}</h1>
+                  <p>{{ salon.location }}</p>
+                </div>
+                <button
+                  type="button"
+                  class="salon-detail__fav-btn"
+                  [class.salon-detail__fav-btn--active]="isFav()"
+                  (click)="toggleFav()"
+                  [attr.aria-label]="isFav() ? 'Retirer des favoris' : 'Ajouter aux favoris'"
+                >
+                  <svg viewBox="0 0 24 24" [attr.fill]="isFav() ? '#ef4444' : 'none'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </button>
+              </div>
             </section>
 
             <!-- Quick Action Tiles Grid -->
@@ -99,10 +116,21 @@ import { Salon } from '../../../shared/models/salon';
 export class SalonDetailPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly salonService = inject(SalonService);
+  private readonly favoritesService = inject(FavoritesService);
 
   protected salon: Salon | null = null;
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
+
+  protected isFav(): boolean {
+    return this.salon ? this.favoritesService.isFavorite(this.salon.id) : false;
+  }
+
+  protected toggleFav(): void {
+    if (this.salon) {
+      this.favoritesService.toggleFavorite(this.salon);
+    }
+  }
 
   ngOnInit(): void {
     this.loadSalon();

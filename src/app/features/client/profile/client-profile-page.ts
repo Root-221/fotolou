@@ -77,6 +77,23 @@ import { AuthSessionService } from '../../auth/auth-session.service';
 
         <!-- Menu Items -->
         <nav class="profile-page__menu" aria-label="Menu profil">
+          <!-- Mes Salons Favoris -->
+          <button type="button" class="profile-page__menu-item" (click)="goToFavorites()">
+            <span class="profile-page__menu-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+            </span>
+            <span class="profile-page__menu-label">Mes Salons Favoris</span>
+            <span class="profile-page__menu-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+          </button>
+
+          <div class="profile-page__divider"></div>
+
           <!-- Mes Commandes -->
           <button type="button" class="profile-page__menu-item" (click)="goToOrders()">
             <span class="profile-page__menu-icon">
@@ -252,6 +269,10 @@ export class ClientProfilePage implements OnInit {
     return this.ticketService.tickets()
       .filter(t => t.status === 'served' || t.status === 'completed')
       .length;
+  }
+
+  protected goToFavorites(): void {
+    this.router.navigate(['/client/favorites']);
   }
 
   protected goToOrders(): void {

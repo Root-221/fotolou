@@ -25,7 +25,12 @@ import { RouterLink } from '@angular/router';
       }
 
       @if (title) {
-        <h2 class="page-header__title">{{ title }}</h2>
+        <div class="page-header__title-wrap">
+          <h2 class="page-header__title">{{ title }}</h2>
+          @if (subtitle) {
+            <span class="page-header__subtitle">{{ subtitle }}</span>
+          }
+        </div>
       }
     </header>
   `,
@@ -33,6 +38,7 @@ import { RouterLink } from '@angular/router';
 })
 export class PageHeader {
   @Input() title = '';
+  @Input() subtitle?: string;
   @Input() showBack = true;
   @Input() backRoute?: string;
   @Input() transparent = false;

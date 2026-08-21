@@ -13,7 +13,7 @@ import { AuthSessionService, SocialProvider } from '../../auth-session.service';
     <app-auth-shell>
       <div class="login-page">
         <header class="login-page__header">
-          <h1>Bienvenue<span aria-hidden="true">&#128075;</span></h1>
+          <h1>Bienvenue</h1>
           <p>Connecte-toi pour continuer</p>
         </header>
 

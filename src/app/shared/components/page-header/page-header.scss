@@ -9,7 +9,7 @@
   justify-content: center;
   min-height: 52px;
   padding: 8px 16px;
-  background: #ffffff;
+  background: var(--bg-surface, #ffffff);
 
   // ── Transparent variant (salon detail, bleed pages) ──
   &--transparent {
@@ -39,12 +39,27 @@
   }
 }
 
+.page-header__title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 .page-header__title {
   margin: 0;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
+}
+
+.page-header__subtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  margin-top: 1px;
 }
 
 .page-header__back-btn {
@@ -58,17 +73,24 @@
   border-radius: 50%;
   padding: 0;
   background: transparent;
-  color: #1e293b;
+  color: var(--text-primary, #1e293b);
   text-decoration: none;
   cursor: pointer;
   transition: background 0.15s ease;
 
   &:hover {
-    background: #f1f5f9;
+    background: var(--bg-card-hover, #f1f5f9);
   }
 
   svg {
     width: 20px;
     height: 20px;
+  }
+}
+
+// ── Dark Mode ────────────────────────────────────────────────
+:host-context(body.dark-theme) {
+  .page-header {
+    background: #1c2541 !important;
   }
 }
