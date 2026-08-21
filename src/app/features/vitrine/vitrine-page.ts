@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { PwaService } from '../../shared/services/pwa.service';
 
@@ -35,8 +36,21 @@ interface FaqItem {
             <a href="#contact" class="vitrine-header__link">Contact</a>
           </nav>
 
-          <!-- Header CTA Button (Download / Install PWA) -->
+          <!-- Header CTA Buttons -->
           <div class="vitrine-header__actions">
+            <a
+              routerLink="/auth/login"
+              class="vitrine-btn vitrine-btn--outline vitrine-header__btn"
+              title="Accéder à l'application"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                <polyline points="10 17 15 12 10 7"/>
+                <line x1="15" y1="12" x2="3" y2="12"/>
+              </svg>
+              <span>Se connecter</span>
+            </a>
+
             <button
               type="button"
               class="vitrine-btn vitrine-btn--primary vitrine-header__btn"
@@ -80,9 +94,21 @@ interface FaqItem {
             </p>
 
             <div class="vitrine-hero__actions">
+              <a
+                routerLink="/auth/login"
+                class="vitrine-btn vitrine-btn--primary vitrine-btn--lg"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                  <polyline points="10 17 15 12 10 7"/>
+                  <line x1="15" y1="12" x2="3" y2="12"/>
+                </svg>
+                <span>Ouvrir l'application</span>
+              </a>
+
               <button
                 type="button"
-                class="vitrine-btn vitrine-btn--primary vitrine-btn--lg"
+                class="vitrine-btn vitrine-btn--outline vitrine-btn--lg"
                 (click)="triggerInstall()"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -90,7 +116,7 @@ interface FaqItem {
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                <span>Télécharger l'application</span>
+                <span>Installer la PWA</span>
               </button>
             </div>
 
@@ -800,11 +826,12 @@ interface FaqItem {
 
             <!-- Application Links -->
             <div class="vitrine-footer__col">
-              <h4>Application PWA</h4>
+              <h4>Accès Application</h4>
               <ul>
+                <li><a routerLink="/auth/login" style="font-weight: 700; color: #1E5AF0;">Se connecter (Client / Coiffeur)</a></li>
+                <li><a routerLink="/client/home">Espace Client</a></li>
+                <li><a routerLink="/coiffeur/home">Espace Coiffeur</a></li>
                 <li><a (click)="triggerInstall()" style="cursor:pointer">Installer sur mobile</a></li>
-                <li><a href="#how-it-works">Comment prendre un ticket</a></li>
-                <li><a href="#features">Tous les services</a></li>
                 <li><a href="#faq">Aide &amp; FAQ</a></li>
               </ul>
             </div>
@@ -864,9 +891,19 @@ interface FaqItem {
   `,
   styleUrl: './vitrine-page.scss'
 })
-export class VitrinePage {
+export class VitrinePage implements OnInit {
   private readonly router = inject(Router);
   private readonly pwa = inject(PwaService);
+  private readonly platformId = inject(PLATFORM_ID);
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      // If user opened the installed PWA on iPhone/Android or with ?source=pwa, forward directly into the app
+      if (this.pwa.isStandalone() || window.location.search.includes('source=pwa')) {
+        void this.router.navigateByUrl('/onboarding');
+      }
+    }
+  }
 
   protected readonly faqs = signal<FaqItem[]>([
     {

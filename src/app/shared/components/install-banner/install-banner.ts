@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { PwaService } from '../../services/pwa.service';
 
 @Component({
@@ -91,6 +92,13 @@ import { PwaService } from '../../services/pwa.service';
             @if (pwa.isIos()) {
               <button
                 type="button"
+                class="install-popup__btn install-popup__btn--secondary"
+                (click)="goToApp()"
+              >
+                Accéder à l'application
+              </button>
+              <button
+                type="button"
                 class="install-popup__btn install-popup__btn--primary"
                 (click)="dismiss()"
               >
@@ -100,9 +108,9 @@ import { PwaService } from '../../services/pwa.service';
               <button
                 type="button"
                 class="install-popup__btn install-popup__btn--secondary"
-                (click)="dismiss()"
+                (click)="goToApp()"
               >
-                Plus tard
+                Continuer sans installer
               </button>
               <button
                 type="button"
@@ -127,12 +135,19 @@ import { PwaService } from '../../services/pwa.service';
 })
 export class InstallBanner {
   protected readonly pwa = inject(PwaService);
+  private readonly router = inject(Router);
 
   protected dismiss(): void {
     this.pwa.dismissBanner();
+  }
+
+  protected goToApp(): void {
+    this.pwa.dismissBanner();
+    void this.router.navigateByUrl('/auth/login');
   }
 
   protected async install(): Promise<void> {
     await this.pwa.promptInstall();
   }
 }
+

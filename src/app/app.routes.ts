@@ -46,6 +46,8 @@ import { adminAuthGuard } from './features/admin/services/admin-auth.service';
 export const routes: Routes = [
   { path: '', component: VitrinePage },
   { path: 'vitrine', component: VitrinePage },
+  { path: 'app', redirectTo: 'onboarding', pathMatch: 'full' },
+  { path: 'login', redirectTo: 'auth/login', pathMatch: 'full' },
   { path: 'onboarding', component: OnboardingPage },
   { path: 'auth/login', component: LoginPage },
   { path: 'auth/code', component: OtpPage },

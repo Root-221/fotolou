@@ -83,6 +83,19 @@
     }
   }
 
+  &--outline {
+    background: #ffffff;
+    color: #1E5AF0;
+    border: 1.5px solid #cbd5e1;
+
+    &:hover {
+      background: #f8fafc;
+      border-color: #1E5AF0;
+      color: #1E5AF0;
+      transform: translateY(-2px);
+    }
+  }
+
   &--outline-white {
     background: transparent;
     color: #ffffff;
@@ -231,6 +244,7 @@
 .vitrine-header__actions {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .vitrine-header__btn {

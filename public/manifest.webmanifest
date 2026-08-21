@@ -1,14 +1,14 @@
 {
   "name": "Fotolou",
   "short_name": "Fotolou",
-  "id": "/?source=pwa",
+  "id": "/onboarding",
   "description": "Moins d'attente, plus de temps — file d'attente et boutique salon.",
   "theme_color": "#1E5AF0",
-  "background_color": "#ffffff",
+  "background_color": "#1E5AF0",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",
-  "start_url": "/?source=pwa",
+  "start_url": "/onboarding",
   "lang": "fr",
   "dir": "ltr",
   "categories": ["lifestyle", "utilities", "shopping", "business"],
@@ -34,4 +34,3 @@
     }
   ]
 }
-
