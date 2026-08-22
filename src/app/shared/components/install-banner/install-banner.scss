@@ -32,7 +32,7 @@
   position: relative;
   width: 100%;
   max-width: 440px;
-  background: #ffffff;
+  background: var(--bg-card, #ffffff);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
   padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
@@ -70,7 +70,7 @@
   border-radius: 14px;
   flex-shrink: 0;
   object-fit: cover;
-  background: #1E5AF0;
+  background: var(--primary, #1E5AF0);
   box-shadow: 0 4px 14px rgba(30, 90, 240, 0.25);
 }
 
@@ -85,7 +85,7 @@
 .install-popup__title {
   font-size: 1.0625rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   line-height: 1.25;
   margin: 0;
 }
@@ -93,13 +93,13 @@
 .install-popup__tag {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #1E5AF0;
+  color: var(--primary, #1E5AF0);
 }
 
 .install-popup__close-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   font-size: 1.25rem;
   width: 32px;
   height: 32px;
@@ -110,8 +110,8 @@
   transition: all 0.15s ease;
 
   &:hover {
-    background: #f1f5f9;
-    color: #475569;
+    background: var(--bg-secondary, #f1f5f9);
+    color: var(--text-primary, #0f172a);
   }
 }
 
@@ -124,7 +124,7 @@
 
 .install-popup__desc {
   font-size: 0.84375rem;
-  color: #475569;
+  color: var(--text-secondary, #64748b);
   line-height: 1.45;
   margin: 0;
 }
@@ -134,10 +134,10 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: #f8fafc;
+  background: var(--bg-page, #f8fafc);
   border-radius: 16px;
   padding: 12px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .install-popup__ios-step {
@@ -150,7 +150,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #1E5AF0;
+  background: var(--primary, #1E5AF0);
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 800;
@@ -163,8 +163,8 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: #e0e7ff;
-  color: #1E5AF0;
+  background: var(--primary-light, #eef2ff);
+  color: var(--primary, #1E5AF0);
   display: grid;
   place-items: center;
   flex-shrink: 0;
@@ -175,19 +175,19 @@
   }
 
   &--check {
-    background: #dcfce7;
-    color: #16a34a;
+    background: var(--success-light, #dcfce7);
+    color: var(--success, #16a34a);
   }
 }
 
 .install-popup__ios-text {
   font-size: 0.8125rem;
-  color: #334155;
+  color: var(--text-secondary, #64748b);
   line-height: 1.35;
   flex: 1;
 
   strong {
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
   }
 }
 
@@ -220,23 +220,23 @@
 
   &--secondary {
     flex: 1;
-    background: #f1f5f9;
-    color: #475569;
+    background: var(--bg-secondary, #f1f5f9);
+    color: var(--text-secondary, #64748b);
 
     &:hover {
-      background: #e2e8f0;
-      color: #0f172a;
+      background: var(--border-color, #e2e8f0);
+      color: var(--text-primary, #0f172a);
     }
   }
 
   &--primary {
     flex: 2;
-    background: #1E5AF0;
+    background: var(--primary, #1E5AF0);
     color: #ffffff;
     box-shadow: 0 4px 14px rgba(30, 90, 240, 0.3);
 
     &:hover {
-      background: #1a4fd6;
+      background: var(--primary-hover, #1746c0);
       transform: translateY(-1px);
       box-shadow: 0 6px 18px rgba(30, 90, 240, 0.4);
     }
@@ -259,7 +259,7 @@
   }
 
   .install-popup__tag {
-    color: #60a5fa !important;
+    color: var(--accent, #f59e0b) !important;
   }
 
   .install-popup__desc {
@@ -276,7 +276,7 @@
   }
 
   .install-popup__ios-steps {
-    background: #0f172a !important;
+    background: #0b132b !important;
     border-color: #334155 !important;
   }
 
@@ -299,7 +299,7 @@
   }
 
   .install-popup__btn--primary {
-    background: #2563eb !important;
-    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4) !important;
+    background: var(--primary, #1E5AF0) !important;
+    box-shadow: 0 4px 16px rgba(30, 90, 240, 0.4) !important;
   }
 }

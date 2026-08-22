@@ -130,8 +130,8 @@
 .client-home__spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #e2e8f0;
-  border-top-color: #1E5AF0;
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-top-color: var(--primary, #1E5AF0);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }

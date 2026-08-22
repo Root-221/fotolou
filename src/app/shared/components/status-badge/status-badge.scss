@@ -6,16 +6,16 @@
   display: inline-flex;
   min-height: 18px;
   align-items: center;
-  border-radius: 4px;
-  padding: 2px 8px;
-  color: #14822d;
-  background: #dbf4de;
-  font-size: 0.68rem;
+  border-radius: 6px;
+  padding: 3px 8px;
+  color: var(--success, #16a34a);
+  background: var(--success-light, #dcfce7);
+  font-size: 0.7rem;
   font-weight: 800;
   line-height: 1;
 }
 
 .status-badge--closed {
-  color: #b42318;
-  background: #fee4e2;
+  color: var(--danger, #dc2626);
+  background: var(--danger-light, #fee2e2);
 }

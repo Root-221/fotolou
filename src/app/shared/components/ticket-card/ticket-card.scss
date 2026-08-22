@@ -6,17 +6,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #eef1f6;
-  border-radius: 14px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 16px;
   padding: 16px 20px;
-  background: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  background: var(--bg-card, #ffffff);
+  box-shadow: var(--shadow-sm, 0 2px 10px rgba(0, 0, 0, 0.02));
   text-decoration: none;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 
   &:hover {
-    border-color: #cbd5e1;
-    transform: translateY(-1px);
+    border-color: var(--primary, #1E5AF0);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 16px rgba(30, 90, 240, 0.08));
   }
 }
 
@@ -47,54 +48,54 @@
   text-transform: uppercase;
 }
 
-/* Status variants matching screenshot */
+/* Status variants matching design system */
 .ticket-card__status--your_turn {
   .ticket-card__dot {
-    background: #16a34a;
+    background: var(--success, #16a34a);
     box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
   }
   .ticket-card__status-text {
-    color: #16a34a;
+    color: var(--success, #16a34a);
   }
 }
 
 .ticket-card__status--waiting {
   .ticket-card__dot {
-    background: #f59e0b;
+    background: var(--warning, #f59e0b);
   }
   .ticket-card__status-text {
-    color: #d97706;
+    color: var(--warning, #f59e0b);
   }
 }
 
 .ticket-card__status--completed {
   .ticket-card__dot {
-    background: #94a3b8;
+    background: var(--text-muted, #94a3b8);
   }
   .ticket-card__status-text {
-    color: #64748b;
+    color: var(--text-secondary, #64748b);
   }
 }
 
 .ticket-card__status--cancelled {
   .ticket-card__dot {
-    background: #ef4444;
+    background: var(--danger, #dc2626);
   }
   .ticket-card__status-text {
-    color: #ef4444;
+    color: var(--danger, #dc2626);
   }
 }
 
 .ticket-card__salon-name {
-  color: #1e293b;
-  font-size: 0.96rem;
+  color: var(--text-primary, #0f172a);
+  font-size: 0.98rem;
   font-weight: 700;
 }
 
 .ticket-card__owner {
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   font-size: 0.85rem;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .ticket-card__right {
@@ -111,13 +112,13 @@
 }
 
 .ticket-card__number-label {
-  color: #64748b;
+  color: var(--text-muted, #94a3b8);
   font-size: 0.68rem;
   font-weight: 700;
 }
 
 .ticket-card__number-value {
-  color: #2563eb;
+  color: var(--primary, #1E5AF0);
   font-size: 1.35rem;
   font-weight: 800;
 }
@@ -126,7 +127,7 @@
   display: inline-flex;
   width: 16px;
   height: 16px;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
 
   svg {
     width: 100%;

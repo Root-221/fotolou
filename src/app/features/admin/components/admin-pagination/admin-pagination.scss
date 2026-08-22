@@ -10,8 +10,8 @@
   flex-wrap: wrap;
   gap: 16px;
   padding: 16px 20px;
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background: var(--bg-card, #ffffff);
+  border-top: 1px solid var(--border-color, #e2e8f0);
   border-radius: 0 0 16px 16px;
 }
 
@@ -21,10 +21,10 @@
   flex-wrap: wrap;
   gap: 16px;
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
 
   strong {
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     font-weight: 700;
   }
 }
@@ -36,22 +36,22 @@
 
   label {
     font-size: 0.8125rem;
-    color: #64748b;
+    color: var(--text-secondary, #64748b);
   }
 
   select {
     padding: 4px 8px;
     border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background: #f8fafc;
+    border: 1px solid var(--border-color, #e2e8f0);
+    background: var(--bg-page, #f8fafc);
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     cursor: pointer;
 
     &:focus {
       outline: none;
-      border-color: #1E5AF0;
+      border-color: var(--primary, #1E5AF0);
     }
   }
 }
@@ -73,9 +73,9 @@
   min-width: 34px;
   padding: 0 8px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  color: #475569;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-secondary, #64748b);
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -91,14 +91,14 @@
   }
 
   &:hover:not(:disabled) {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-    color: #0f172a;
+    background: var(--bg-page, #f8fafc);
+    border-color: var(--border-color, #e2e8f0);
+    color: var(--text-primary, #0f172a);
   }
 
   &.active {
-    background: #1E5AF0;
-    border-color: #1E5AF0;
+    background: var(--primary, #1E5AF0);
+    border-color: var(--primary, #1E5AF0);
     color: #ffffff;
     box-shadow: 0 2px 8px rgba(30, 90, 240, 0.25);
   }
@@ -111,6 +111,6 @@
 
 .admin-pagination__ellipsis {
   padding: 0 6px;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   font-weight: 700;
 }

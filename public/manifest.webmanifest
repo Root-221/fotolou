@@ -4,7 +4,7 @@
   "id": "/onboarding",
   "description": "Moins d'attente, plus de temps — file d'attente et boutique salon.",
   "theme_color": "#1E5AF0",
-  "background_color": "#1E5AF0",
+  "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",

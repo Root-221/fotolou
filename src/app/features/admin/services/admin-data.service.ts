@@ -714,6 +714,7 @@ export class AdminDataService {
           : t
       )
     );
+    this.ticketService.serveTicket(ticketId).subscribe({ error: () => {} });
   }
 
   cancelTicket(ticketId: string): void {
@@ -724,6 +725,7 @@ export class AdminDataService {
           : t
       )
     );
+    this.ticketService.cancelTicket(ticketId).subscribe({ error: () => {} });
   }
 
   // ── Product CRUD ──────────────────────────────────────────

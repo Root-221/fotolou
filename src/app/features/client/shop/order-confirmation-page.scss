@@ -31,8 +31,8 @@
   height: 64px;
   place-items: center;
   border-radius: 50%;
-  background: #edf4ff;
-  color: #2563eb;
+  background: var(--primary-light, #eef2ff);
+  color: var(--primary, #1E5AF0);
   margin-bottom: 16px;
 
   svg {
@@ -44,10 +44,10 @@
 .order-confirm-page__card {
   display: flex;
   flex-direction: column;
-  border: 1.5px solid #f1f5f9;
+  border: 1.5px solid var(--border-color, #e2e8f0);
   border-radius: 20px;
   padding: 18px;
-  background: #ffffff;
+  background: var(--bg-card, #ffffff);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 
@@ -59,7 +59,7 @@
 }
 
 .order-confirm-page__order-num {
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 1rem;
   font-weight: 800;
 }
@@ -67,8 +67,8 @@
 .order-confirm-page__badge {
   padding: 4px 10px;
   border-radius: 999px;
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--success-light, #dcfce7);
+  color: var(--success, #16a34a);
   font-size: 0.75rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -92,7 +92,7 @@
   height: 48px;
   object-fit: cover;
   border-radius: 10px;
-  background: #f1f5f9;
+  background: var(--bg-secondary, #f1f5f9);
   flex-shrink: 0;
 }
 
@@ -102,13 +102,13 @@
   gap: 2px;
 
   strong {
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     font-size: 0.88rem;
     font-weight: 700;
   }
 
   span {
-    color: #64748b;
+    color: var(--text-secondary, #64748b);
     font-size: 0.78rem;
   }
 }
@@ -116,7 +116,7 @@
 .order-confirm-page__divider {
   height: 1px;
   margin-bottom: 14px;
-  background: #f1f5f9;
+  background: var(--border-color, #e2e8f0);
 }
 
 .order-confirm-page__total-row {
@@ -125,14 +125,14 @@
   justify-content: space-between;
 
   span {
-    color: #64748b;
+    color: var(--text-secondary, #64748b);
     font-size: 0.82rem;
     font-weight: 800;
     letter-spacing: 0.04em;
   }
 
   strong {
-    color: #2563eb;
+    color: var(--primary, #1E5AF0);
     font-size: 1.15rem;
     font-weight: 900;
   }
@@ -143,7 +143,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 16px 20px 24px;
-  background: #ffffff;
+  background: var(--bg-card, #ffffff);
 }
 
 .order-confirm-page__whatsapp-btn {
@@ -185,17 +185,17 @@
   gap: 8px;
   width: 100%;
   min-height: 48px;
-  border: 1.5px solid #2563eb;
+  border: 1.5px solid var(--primary, #1E5AF0);
   border-radius: 12px;
   background: transparent;
-  color: #2563eb;
+  color: var(--primary, #1E5AF0);
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.15s ease;
 
   &:hover {
-    background: #edf4ff;
+    background: var(--primary-light, #eef2ff);
   }
 
   svg {

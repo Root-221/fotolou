@@ -24,7 +24,7 @@
 .desktop-alert__card {
   width: 100%;
   max-width: 520px;
-  background: #ffffff;
+  background: var(--bg-card, #ffffff);
   border-radius: 28px;
   padding: 36px 32px;
   text-align: center;
@@ -33,7 +33,7 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .desktop-alert__brand {
@@ -52,8 +52,8 @@
   width: 64px;
   height: 64px;
   border-radius: 20px;
-  background: #eef2ff;
-  color: #1E5AF0;
+  background: var(--primary-light, #eef2ff);
+  color: var(--primary, #1E5AF0);
   display: grid;
   place-items: center;
 
@@ -72,20 +72,20 @@
   h2 {
     font-size: 1.35rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     line-height: 1.25;
     margin: 0;
   }
 
   p {
     font-size: 0.9375rem;
-    color: #64748b;
+    color: var(--text-secondary, #64748b);
     line-height: 1.55;
     margin: 0;
     max-width: 440px;
 
     strong {
-      color: #0f172a;
+      color: var(--text-primary, #0f172a);
     }
   }
 }
@@ -95,16 +95,16 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #1E5AF0;
-  background: #eef2ff;
+  color: var(--primary, #1E5AF0);
+  background: var(--primary-light, #eef2ff);
   padding: 4px 12px;
   border-radius: 9999px;
 }
 
 .desktop-alert__qr-box {
   width: 100%;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
+  background: var(--bg-page, #f8fafc);
+  border: 1px dashed var(--border-color, #e2e8f0);
   border-radius: 20px;
   padding: 20px;
   display: flex;
@@ -136,13 +136,13 @@
 
   strong {
     font-size: 0.9375rem;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     font-weight: 700;
   }
 
   span {
     font-size: 0.8125rem;
-    color: #64748b;
+    color: var(--text-secondary, #64748b);
     line-height: 1.45;
   }
 }
@@ -172,12 +172,12 @@
   }
 
   &--primary {
-    background: #1E5AF0;
+    background: var(--primary, #1E5AF0);
     color: #ffffff;
     box-shadow: 0 4px 14px rgba(30, 90, 240, 0.3);
 
     &:hover {
-      background: #1746c0;
+      background: var(--primary-hover, #1746c0);
       transform: translateY(-2px);
       box-shadow: 0 8px 22px rgba(30, 90, 240, 0.4);
     }
@@ -186,5 +186,5 @@
 
 .desktop-alert__note {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
 }

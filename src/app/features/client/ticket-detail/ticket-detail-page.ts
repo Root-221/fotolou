@@ -273,10 +273,11 @@ export class TicketDetailPage implements OnInit {
     switch (this.ticket.status) {
       case 'served':
       case 'completed':
-        return '#10b981';
+        return '#16a34a';
       case 'cancelled':
-        return '#ef4444';
+        return '#dc2626';
       case 'your_turn':
+        return '#16a34a';
       case 'waiting':
       default:
         return '#1E5AF0';

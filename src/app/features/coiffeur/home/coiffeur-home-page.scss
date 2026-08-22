@@ -12,13 +12,13 @@
   background-image: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80');
   background-size: cover;
   background-position: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 6px 20px rgba(30, 90, 240, 0.16);
 }
 
 .coiffeur-hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.75) 100%);
+  background: linear-gradient(180deg, rgba(11, 19, 43, 0.35) 0%, rgba(11, 19, 43, 0.85) 100%);
 }
 
 .coiffeur-hero__content {
@@ -84,12 +84,12 @@
   border: none;
   border-radius: 999px;
   padding: 3px;
-  background: #64748b;
+  background: var(--text-muted, #94a3b8);
   cursor: pointer;
   transition: background 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
   &--active {
-    background: #22c55e;
+    background: var(--success, #16a34a);
   }
 }
 
@@ -118,15 +118,15 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border: 1.5px solid #f1f5f9;
+  border: 1.5px solid var(--border-color, #e2e8f0);
   border-radius: 18px;
   padding: 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  background: var(--bg-card, #ffffff);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.03));
 }
 
 .coiffeur-stat-card__label {
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   font-size: 0.76rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -134,7 +134,7 @@
 }
 
 .coiffeur-stat-card__val {
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 1.8rem;
   font-weight: 900;
   line-height: 1.1;
@@ -143,9 +143,9 @@
 
 .coiffeur-stat-card__bar-track {
   width: 100%;
-  height: 5px;
+  height: 6px;
   border-radius: 999px;
-  background: #f1f5f9;
+  background: var(--bg-secondary, #f1f5f9);
   overflow: hidden;
 }
 
@@ -154,17 +154,17 @@
   border-radius: 999px;
 
   &--current {
-    background: #93c5fd;
+    background: var(--accent, #f59e0b);
   }
 
   &--served {
-    background: #2563eb;
+    background: var(--primary, #1E5AF0);
   }
 }
 
 .coiffeur-activity__title {
   margin: 0 0 14px;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 1.2rem;
   font-weight: 800;
 }
@@ -179,11 +179,11 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  border: 1.5px solid #f1f5f9;
+  border: 1.5px solid var(--border-color, #e2e8f0);
   border-radius: 18px;
   padding: 14px 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  background: var(--bg-card, #ffffff);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.02));
 }
 
 .activity-card__avatar {
@@ -192,7 +192,7 @@
   height: 48px;
   place-items: center;
   border-radius: 14px;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 1.05rem;
   font-weight: 800;
   flex-shrink: 0;
@@ -207,13 +207,13 @@
 }
 
 .activity-card__name {
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 0.95rem;
   font-weight: 800;
 }
 
 .activity-card__date {
-  color: #94a3b8;
+  color: var(--text-muted, #94a3b8);
   font-size: 0.78rem;
 }
 
@@ -226,12 +226,12 @@
   text-transform: uppercase;
 
   &--served {
-    background: #dcfce7;
-    color: #16a34a;
+    background: var(--success-light, #dcfce7);
+    color: var(--success, #16a34a);
   }
 
   &--cancelled {
-    background: #fee2e2;
-    color: #ef4444;
+    background: var(--danger-light, #fee2e2);
+    color: var(--danger, #dc2626);
   }
 }

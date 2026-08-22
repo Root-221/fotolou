@@ -11,7 +11,7 @@
   margin-bottom: 20px;
   border-radius: 14px;
   padding: 4px;
-  background: #eef2f6;
+  background: var(--bg-secondary, #f1f5f9);
 }
 
 .coiffeur-tickets__tab {
@@ -19,17 +19,17 @@
   border: none;
   border-radius: 10px;
   background: transparent;
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
   &--active {
-    background: #2563eb;
+    background: var(--primary, #1E5AF0);
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 4px 12px rgba(30, 90, 240, 0.25);
   }
 }
 
@@ -42,25 +42,27 @@
 
 .coiffeur-tickets__title {
   margin: 0;
-  color: #0f172a;
-  font-size: 1.3rem;
+  color: var(--text-primary, #0f172a);
+  font-size: 1.25rem;
   font-weight: 800;
 }
 
-.coiffeur-tickets__filter-btn {
+.coiffeur-tickets__add-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   border: none;
-  background: transparent;
-  color: #2563eb;
-  font-size: 0.88rem;
+  border-radius: 10px;
+  padding: 8px 14px;
+  background: var(--primary-light, #eef2ff);
+  color: var(--primary, #1E5AF0);
+  font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.15s ease;
 
-  svg {
-    width: 16px;
-    height: 16px;
+  &:hover {
+    background: var(--border-color, #e2e8f0);
   }
 }
 
@@ -73,11 +75,11 @@
 .queue-card {
   display: flex;
   flex-direction: column;
-  border: 1.5px solid #f1f5f9;
+  border: 1.5px solid var(--border-color, #e2e8f0);
   border-radius: 18px;
   padding: 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  background: var(--bg-card, #ffffff);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.03));
 }
 
 .queue-card__top {
@@ -88,13 +90,14 @@
 
 .queue-card__pos-box {
   display: grid;
-  width: 44px;
-  height: 44px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0 8px;
   place-items: center;
-  border-radius: 12px;
-  background: #f1f5f9;
-  color: #2563eb;
-  font-size: 1.15rem;
+  border-radius: 14px;
+  background: var(--primary-light, #eef2ff);
+  color: var(--primary, #1E5AF0);
+  font-size: 1.05rem;
   font-weight: 800;
   flex-shrink: 0;
 }
@@ -108,13 +111,13 @@
 }
 
 .queue-card__name {
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 0.98rem;
   font-weight: 800;
 }
 
 .queue-card__phone {
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   font-size: 0.80rem;
 }
 
@@ -125,24 +128,24 @@
   font-weight: 700;
 
   &--current {
-    background: #059669;
+    background: var(--primary, #1E5AF0);
     color: #ffffff;
   }
 
   &--waiting {
-    background: #f1f5f9;
-    color: #64748b;
+    background: var(--bg-secondary, #f1f5f9);
+    color: var(--text-secondary, #64748b);
   }
 
   &--served {
-    background: #dcfce7;
-    color: #16a34a;
+    background: var(--success-light, #dcfce7);
+    color: var(--success, #16a34a);
     font-weight: 800;
   }
 
   &--cancelled {
-    background: #fee2e2;
-    color: #ef4444;
+    background: var(--danger-light, #fee2e2);
+    color: var(--danger, #dc2626);
     font-weight: 800;
   }
 }
@@ -155,7 +158,7 @@
 }
 
 .queue-card__btn {
-  border-radius: 10px;
+  border-radius: 12px;
   height: 42px;
   font-size: 0.88rem;
   font-weight: 700;
@@ -164,73 +167,25 @@
 
   &--skip {
     flex: 1;
-    border: none;
-    background: #2563eb;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    border: 1.5px solid var(--danger-light, #fee2e2);
+    background: var(--danger-light, #fee2e2);
+    color: var(--danger, #dc2626);
 
     &:hover {
-      background: #1d4ed8;
+      background: #fecaca;
     }
   }
 
   &--served {
-    flex: 1;
-    border: 1.5px solid #059669;
-    background: transparent;
-    color: #059669;
+    flex: 1.2;
+    border: none;
+    background: var(--primary, #1E5AF0);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(30, 90, 240, 0.2);
 
     &:hover {
-      background: #ecfdf5;
+      background: var(--primary-hover, #1746c0);
     }
-  }
-
-  &--more {
-    width: 42px;
-    border: 1.5px solid #e2e8f0;
-    background: transparent;
-    color: #64748b;
-    font-size: 1.2rem;
-    line-height: 1;
-
-    &:hover {
-      background: #f8fafc;
-    }
-  }
-}
-
-.coiffeur-tickets__empty {
-  padding: 48px 0;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.coiffeur-fab {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  z-index: 10;
-  display: grid;
-  width: 56px;
-  height: 56px;
-  place-items: center;
-  border: none;
-  border-radius: 50%;
-  background: #2563eb;
-  color: #ffffff;
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.15s ease;
-
-  &:hover {
-    background: #1d4ed8;
-    transform: scale(1.05);
-  }
-
-  svg {
-    width: 26px;
-    height: 26px;
   }
 }
 
@@ -242,7 +197,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(11, 19, 43, 0.6);
   backdrop-filter: blur(4px);
 }
 
@@ -254,13 +209,13 @@
   max-width: 400px;
   border-radius: 20px;
   padding: 24px;
-  background: #ffffff;
+  background: var(--bg-card, #ffffff);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .walkin-modal__title {
   margin: 0;
-  color: #0f172a;
+  color: var(--text-primary, #0f172a);
   font-size: 1.2rem;
   font-weight: 800;
 }
@@ -271,21 +226,21 @@
   gap: 6px;
 
   label {
-    color: #475569;
+    color: var(--text-secondary, #64748b);
     font-size: 0.82rem;
     font-weight: 700;
   }
 
   input {
     min-height: 44px;
-    border: 1.5px solid #e2e8f0;
+    border: 1.5px solid var(--border-color, #e2e8f0);
     border-radius: 10px;
     padding: 0 14px;
     font-size: 0.90rem;
     outline: none;
 
     &:focus {
-      border-color: #2563eb;
+      border-color: var(--primary, #1E5AF0);
     }
   }
 }
@@ -300,23 +255,28 @@
 .walkin-modal__cancel-btn {
   flex: 1;
   min-height: 44px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--border-color, #e2e8f0);
   border-radius: 10px;
   background: transparent;
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .walkin-modal__submit-btn {
-  flex: 1;
+  flex: 1.2;
   min-height: 44px;
   border: none;
   border-radius: 10px;
-  background: #2563eb;
+  background: var(--primary, #1E5AF0);
   color: #ffffff;
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(30, 90, 240, 0.25);
+
+  &:hover {
+    background: var(--primary-hover, #1746c0);
+  }
 }

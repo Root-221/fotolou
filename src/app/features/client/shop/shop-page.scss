@@ -60,7 +60,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--primary, #1E5AF0);
+  background: var(--accent, #f59e0b);
   box-shadow: 0 0 0 2px var(--bg-surface, #ffffff);
 }
 
@@ -95,7 +95,7 @@
   padding: 0 4px;
   place-items: center;
   border-radius: 999px;
-  background: #ef4444;
+  background: var(--accent, #f59e0b);
   color: #ffffff;
   font-size: 0.70rem;
   font-weight: 800;
@@ -138,7 +138,7 @@
   text-decoration: underline;
 
   &:hover {
-    color: var(--primary-hover, #1a4fd6);
+    color: var(--primary-hover, #1746c0);
   }
 }
 

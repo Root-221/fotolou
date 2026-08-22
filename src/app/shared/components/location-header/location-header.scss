@@ -94,7 +94,7 @@
   color: var(--text-primary, #111827);
 }
 
-// Badge in header: primary brand blue
+// Badge in header: primary brand or accent amber
 .location-header__fav-badge {
   position: absolute;
   top: 4px;
@@ -103,7 +103,7 @@
   height: 16px;
   padding: 0 4px;
   border-radius: 9999px;
-  background: var(--primary, #1E5AF0);
+  background: var(--accent, #f59e0b);
   color: #ffffff;
   font-size: 0.625rem;
   font-weight: 800;
@@ -121,7 +121,7 @@
   height: 7px;
   border: 1.5px solid var(--bg-surface, #ffffff);
   border-radius: 50%;
-  background: #ef4444;
+  background: var(--accent, #f59e0b);
 }
 
 .location-header__spacer {
@@ -139,11 +139,12 @@
   }
 
   .location-header__fav-badge {
-    background: #3b82f6 !important;
+    background: #f59e0b !important;
     border-color: #1c2541 !important;
   }
 
   .location-header__unread-dot {
+    background: #f59e0b !important;
     border-color: #1c2541 !important;
   }
 }

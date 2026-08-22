@@ -6,10 +6,10 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  background: #f1f5f9;
+  background: var(--bg-secondary, #f1f5f9);
   padding: 3px;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .admin-view-toggle__btn {
@@ -21,7 +21,7 @@
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--text-secondary, #64748b);
   font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -34,12 +34,12 @@
   }
 
   &:hover:not(.active) {
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
   }
 
   &.active {
-    background: #ffffff;
-    color: #1E5AF0;
+    background: var(--bg-card, #ffffff);
+    color: var(--primary, #1E5AF0);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   }
 }

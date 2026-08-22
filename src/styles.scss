@@ -3,14 +3,20 @@
   color-scheme: light;
   --font-family: 'Plus Jakarta Sans', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   
-  // Brand Colors
+  // Brand Colors (Official Fotolou Identity - Electric Blue)
   --primary: #1E5AF0;
-  --primary-hover: #1a4fd6;
-  --secondary: #3b82f6;
-  --accent: #C1621B;
-  --success: #10b981;
+  --primary-hover: #1746c0;
+  --primary-light: #eef2ff;
+  --secondary: #0d3eb8;
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  --accent-light: #fffbeb;
+  --success: #16a34a;
+  --success-light: #dcfce7;
   --warning: #f59e0b;
-  --danger: #ef4444;
+  --warning-light: #fef3c7;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
 
   // Surfaces & Backgrounds
   --bg-page: #f8fafc;
@@ -32,9 +38,9 @@
   --divider: #e2e8f0;
 
   // Shadows
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.06);
-  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 1px 3px rgba(30, 90, 240, 0.05);
+  --shadow-md: 0 4px 16px rgba(30, 90, 240, 0.08);
+  --shadow-lg: 0 10px 30px rgba(30, 90, 240, 0.12);
 
   // Border Radius
   --radius-sm: 8px;
@@ -47,7 +53,7 @@
   color: var(--text-primary);
 }
 
-// ── Ultra High Contrast Dark Theme ────────────────────────
+// ── Ultra High Contrast Dark Theme (Luxurious Deep Navy Night) ──
 body.dark-theme {
   color-scheme: dark;
   
@@ -55,10 +61,10 @@ body.dark-theme {
   --bg-primary: #0b132b;
   --bg-secondary: #1c2541;
   --bg-card: #1c2541;
-  --bg-card-hover: #242f54;
+  --bg-card-hover: #243056;
   --bg-header: #1c2541;
 
-  --text-primary: #ffffff;
+  --text-primary: #f8f9fa;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
 
@@ -66,12 +72,12 @@ body.dark-theme {
   --border-subtle: #1e293b;
   --divider: #334155;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.55);
 
   background-color: #0b132b !important;
-  color: #ffffff !important;
+  color: #f8f9fa !important;
 
   // Global dark mode text & surfaces
   p, span, label, input, textarea, select, strong, b, h1, h2, h3, h4, h5, h6, div, button, a, li {
@@ -141,7 +147,7 @@ body.dark-theme {
   .settings-row:hover,
   .relative-card:hover,
   .activity-card:hover {
-    background-color: #2a365c !important;
+    background-color: #243056 !important;
   }
 
   // Headings
@@ -210,7 +216,7 @@ body.dark-theme {
 
   // Form Inputs
   input, textarea, select {
-    background-color: #0f172a !important;
+    background-color: #0b132b !important;
     border-color: #334155 !important;
     color: #ffffff !important;
 
@@ -243,7 +249,7 @@ body.dark-theme {
       color: #94a3b8 !important;
 
       &--active {
-        color: #3b82f6 !important;
+        color: #1E5AF0 !important;
       }
     }
   }
@@ -252,13 +258,14 @@ body.dark-theme {
   .category-pill,
   .coiffeur-tickets__tab,
   .my-tickets-page__tab {
-    background: #0f172a !important;
+    background: #0b132b !important;
     color: #cbd5e1 !important;
     border-color: #334155 !important;
 
     &--active, &.active, &[class*="--active"] {
-      background: #2563eb !important;
+      background: #1E5AF0 !important;
       color: #ffffff !important;
+      border-color: #1E5AF0 !important;
     }
   }
 
@@ -348,7 +355,7 @@ h1, h2, h3, h4, h5, h6, p {
   label {
     font-size: 0.8125rem;
     font-weight: 700;
-    color: #334155;
+    color: var(--text-secondary, #64748b);
     letter-spacing: -0.01em;
   }
 
@@ -362,23 +369,23 @@ h1, h2, h3, h4, h5, h6, p {
     height: 46px;
     padding: 0 14px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
-    background: #f8fafc;
+    border: 1.5px solid var(--border-color, #e2e8f0);
+    background: var(--bg-page, #f8fafc);
     font-family: inherit;
     font-size: 0.875rem;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     box-sizing: border-box;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
     &::placeholder {
-      color: #94a3b8;
+      color: var(--text-muted, #94a3b8);
     }
 
     &:focus {
       outline: none;
       background: #ffffff;
-      border-color: #1E5AF0;
-      box-shadow: 0 0 0 3.5px rgba(30, 90, 240, 0.14);
+      border-color: var(--primary, #1E5AF0);
+      box-shadow: 0 0 0 3.5px rgba(30, 90, 240, 0.15);
     }
   }
 
@@ -386,25 +393,24 @@ h1, h2, h3, h4, h5, h6, p {
     width: 100%;
     padding: 12px 14px;
     border-radius: 12px;
-    border: 1.5px solid #e2e8f0;
-    background: #f8fafc;
+    border: 1.5px solid var(--border-color, #e2e8f0);
+    background: var(--bg-page, #f8fafc);
     font-family: inherit;
     font-size: 0.875rem;
-    color: #0f172a;
+    color: var(--text-primary, #0f172a);
     box-sizing: border-box;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     resize: vertical;
 
     &::placeholder {
-      color: #94a3b8;
+      color: var(--text-muted, #94a3b8);
     }
 
     &:focus {
       outline: none;
       background: #ffffff;
-      border-color: #1E5AF0;
-      box-shadow: 0 0 0 3.5px rgba(30, 90, 240, 0.14);
+      border-color: var(--primary, #1E5AF0);
+      box-shadow: 0 0 0 3.5px rgba(30, 90, 240, 0.15);
     }
   }
 }
-

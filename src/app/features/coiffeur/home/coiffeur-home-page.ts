@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientLayout } from '../../../shared/components/client-layout/client-layout';
 import { LocationHeader } from '../../../shared/components/location-header/location-header';
@@ -89,7 +89,7 @@ interface RecentActivity {
           <h2 class="coiffeur-activity__title">Activité récente du salon</h2>
 
           <div class="coiffeur-activity__list">
-            @for (item of recentActivities; track item.id) {
+            @for (item of recentActivities(); track item.id) {
               <div class="activity-card">
                 <div class="activity-card__avatar" [style.background]="item.avatarBg">
                   {{ item.initial }}
@@ -123,24 +123,40 @@ export class CoiffeurHomePage {
 
   protected readonly isQueueOpen = signal(true);
 
-  protected readonly recentActivities: readonly RecentActivity[] = [
-    {
-      id: 'act-1',
-      initial: 'K',
-      name: 'Karim Fall',
-      date: 'Aujourd\'hui, 13h15',
-      status: 'SERVI',
-      avatarBg: '#fef3c7'
-    },
-    {
-      id: 'act-2',
-      initial: 'S',
-      name: 'Saliou Ndiaye',
-      date: 'Hier, 16h40',
-      status: 'ANNULÉ',
-      avatarBg: '#e0e7ff'
+  private readonly avatarColors = ['#eef2ff', '#fee2e2', '#fef3c7', '#f1f5f9', '#e0e7ff'];
+
+  protected readonly recentActivities = computed<RecentActivity[]>(() => {
+    const historyTickets = this.ticketService.tickets().filter((t) => t.category === 'history');
+    if (historyTickets.length > 0) {
+      return historyTickets.slice(0, 5).map((t, idx) => ({
+        id: t.id,
+        initial: (t.ownerName || 'C').charAt(0).toUpperCase(),
+        name: t.ownerName || 'Client',
+        date: t.servedAt || t.createdAt || 'Aujourd\'hui',
+        status: (t.status === 'served' || t.status === 'completed' ? 'SERVI' : 'ANNULÉ') as 'SERVI' | 'ANNULÉ',
+        avatarBg: this.avatarColors[idx % this.avatarColors.length]
+      }));
     }
-  ];
+
+    return [
+      {
+        id: 'act-1',
+        initial: 'K',
+        name: 'Karim Fall',
+        date: 'Aujourd\'hui, 13h15',
+        status: 'SERVI',
+        avatarBg: '#eef2ff'
+      },
+      {
+        id: 'act-2',
+        initial: 'S',
+        name: 'Saliou Ndiaye',
+        date: 'Hier, 16h40',
+        status: 'ANNULÉ',
+        avatarBg: '#fee2e2'
+      }
+    ];
+  });
 
   protected toggleQueue(): void {
     this.isQueueOpen.update((v) => !v);
